@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1400">
-    <title>跨境运营灵动仪表盘 v5.3.3 (终极稳定版)</title>
+    <title>跨境运营灵动仪表盘 v5.3.4 (稳定修复版)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -96,7 +97,11 @@
         .btn-icon:hover { color: var(--danger); }
         .action-group { display: flex; gap: 8px; align-items: center; }
 
-        /* Toast 提示 */
+        /* 标签 */
+        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .tag { background: #fff; border: 1px solid #e5e7eb; padding: 4px 10px; border-radius: 15px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; color: #4b5563; transition: 0.2s; }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
+
         .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 12px 24px; border-radius: 8px; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold; font-size: 13px; }
     </style>
 </head>
@@ -118,7 +123,7 @@
                 <i class="fa-solid fa-bolt"></i>
             </div>
             <div>
-                <h1 style="margin:0; font-size:18px; color: var(--text-title); font-weight: 800;">跨境运营核心工作台 <span style="font-weight:normal; opacity:0.5; font-size:13px;">v5.3.3</span></h1>
+                <h1 style="margin:0; font-size:18px; color: var(--text-title); font-weight: 800;">跨境运营核心工作台 <span style="font-weight:normal; opacity:0.5; font-size:13px;">v5.3.4</span></h1>
                 <p style="margin:0; font-size:12px; color:var(--text-body);">结算汇率: <strong id="rateLabel" style="color:var(--primary)">7.1200</strong></p>
             </div>
         </div>
@@ -153,11 +158,11 @@
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-headset"></i> 售后处理中心</div>
             <div class="action-group">
-                <button class="btn btn-ghost btn-mini" onclick="exportData('issue_db_v53', '售后记录')"><i class="fa-solid fa-download"></i></button>
-                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'issue')"></label>
-                <select id="issueSort" onchange="loadIssues()" style="padding:4px; font-size:12px; width:120px;"><option value="date-desc">日期新➡旧</option><option value="days-desc">天数多➡少</option></select>
+                <button class="btn btn-ghost btn-mini" onclick="exportData('issue_db_v53', '售后记录')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'issue')"></label>
+                <select id="issueSort" onchange="loadIssues()" style="padding:6px; font-size:12px; width:130px;"><option value="date-desc">日期新➡旧</option><option value="date-asc">日期旧➡新</option><option value="order-asc">单号小➡大</option><option value="order-desc">单号大➡小</option></select>
                 <input type="text" id="issueSearch" placeholder="搜索单号..." oninput="filterIssues()" style="width:120px; padding:6px;">
-                <button class="btn btn-primary btn-mini" onclick="addIssueRow()"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn btn-primary btn-mini" onclick="addIssueRow()"><i class="fa-solid fa-plus"></i> 新增</button>
             </div>
         </div>
         <div class="card-body" style="padding: 0;">
@@ -172,13 +177,14 @@
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-calculator"></i> 利润即时分析面板</div>
             <div class="action-group">
-                <button class="btn btn-ghost btn-mini" onclick="resetCalc()">清空内容</button>
-                <button class="btn btn-primary btn-mini" onclick="exportCalcRow()"><i class="fa-solid fa-download"></i> 导出此条</button>
+                <button class="btn btn-ghost btn-mini" onclick="exportData('profit_list_v53', '利润档案')"><i class="fa-solid fa-download"></i> 导出档案</button>
+                <button class="btn btn-ghost btn-mini" onclick="resetCalc()"><i class="fa-solid fa-eraser"></i> 清空</button>
+                <button class="btn btn-primary btn-mini" onclick="saveCurrentProduct()"><i class="fa-solid fa-floppy-disk"></i> 存档记忆</button>
             </div>
         </div>
         <div class="card-body">
             <div class="input-group">
-                <div><label class="field-label">商品名称 / SKU</label><input type="text" id="calc_name" placeholder="输入名称进行记录" oninput="saveCalcState()"></div>
+                <div><label class="field-label">商品名称 / SKU</label><input type="text" id="calc_name" placeholder="输入名称进行存档" oninput="runCalc()"></div>
                 <div><label class="field-label">竞品售价 ($)</label><input type="number" id="calc_off" step="0.01" oninput="runCalc()"></div>
                 <div><label class="field-label">我司售价 ($)</label><input type="number" id="calc_my" step="0.01" oninput="runCalc()"></div>
                 <div>
@@ -187,7 +193,7 @@
                 </div>
             </div>
             
-            <div class="metrics-grid">
+            <div class="tag-list" id="calcHistoryTags"></div> <div class="metrics-grid">
                 <div class="metric-item">
                     <label class="field-label">采购成本 (¥)</label>
                     <input type="number" id="calc_cost" class="metric-input-box" oninput="runCalc()" placeholder="0">
@@ -216,9 +222,9 @@
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-plane-departure"></i> SKU 物流雷达</div>
             <div class="action-group">
-                <button class="btn btn-ghost btn-mini" onclick="exportData('sku_radar_v53', '物流监控')"><i class="fa-solid fa-download"></i></button>
-                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'sku')"></label>
-                <button class="btn btn-primary btn-mini" onclick="addSKULogix()"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn btn-ghost btn-mini" onclick="exportData('sku_radar_v53', '物流监控')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'sku')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addSKULogix()"><i class="fa-solid fa-plus"></i> 新增监控</button>
             </div>
         </div>
         <div class="card-body" style="padding:0">
@@ -233,9 +239,9 @@
         <div class="card-header">
             <div class="card-title"><i class="fa-brands fa-facebook-f"></i> FB 广告监控</div>
             <div class="action-group">
-                <button class="btn btn-ghost btn-mini" onclick="exportData('fb_ads_v53', 'FB广告')"><i class="fa-solid fa-download"></i></button>
-                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'fb')"></label>
-                <button class="btn btn-primary btn-mini" onclick="addFBRow()"><i class="fa-solid fa-plus"></i></button>
+                <button class="btn btn-ghost btn-mini" onclick="exportData('fb_ads_v53', 'FB广告')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'fb')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addFBRow()"><i class="fa-solid fa-plus"></i> 新增帖子</button>
             </div>
         </div>
         <div class="card-body" style="padding:0">
@@ -251,6 +257,11 @@
 <script>
     let globalRate = 7.12;
 
+    // --- HTML 安全转义函数，杜绝因双引号导致的DOM崩坏清空bug ---
+    function esc(s) {
+        return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
     window.onload = () => {
         startClocks();
         fetchRate();
@@ -259,13 +270,37 @@
         loadFBTable();
         loadSKULogix();
         checkDailyReset();
-        loadCalcState();
+        loadCalcHistoryUI(); // 加载利润记忆标签
+        
+        // 恢复未存档草稿
+        try {
+            const draft = JSON.parse(localStorage.getItem('calc_draft_v53'));
+            if(draft) {
+                document.getElementById('calc_name').value = draft.name || '';
+                document.getElementById('calc_off').value = draft.off || '';
+                document.getElementById('calc_my').value = draft.my || '';
+                document.getElementById('calc_cost').value = draft.cost || '';
+                document.getElementById('calc_ship').value = draft.ship || '';
+                runCalc();
+            }
+        } catch(e){}
+
         initNativeDragAndDrop(); 
     };
 
-    // --- 极简原生拖拽实现 ---
-    let draggedItem = null;
+    // --- 时钟 & 汇率 (完全修复显示字符) ---
+    function startClocks() {
+        const update = () => {
+            [{id:'bj',z:'Asia/Shanghai'},{id:'la',z:'America/Los_Angeles'},{id:'uk',z:'Europe/London'},{id:'cz',z:'Europe/Prague'},{id:'au',z:'Australia/Sydney'}].forEach(z => {
+                const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: z.z, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                document.getElementById(`time-${z.id}`).innerText = formatter.format(new Date());
+            });
+        }; update(); setInterval(update, 1000);
+    }
+    async function fetchRate() { try { const r = await fetch('https://open.er-api.com/v6/latest/USD'); const d = await r.json(); if(d?.rates?.CNY) { globalRate = d.rates.CNY; document.getElementById('rateLabel').innerText = globalRate.toFixed(4); runCalc(); } } catch(e){} }
 
+    // --- 原生拖拽实现 ---
+    let draggedItem = null;
     function initNativeDragAndDrop() {
         const containers = ['todoList', 'scheduleList', 'dailyList', 'issueBody', 'fbContainer'];
         containers.forEach(id => {
@@ -273,9 +308,7 @@
             if(!container) return;
             
             container.addEventListener('dragstart', (e) => {
-                if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-                    e.preventDefault(); return; 
-                }
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return; 
                 draggedItem = e.target.closest('.task-item, .issue-row, .fb-row');
                 if(!draggedItem) return;
                 draggedItem.classList.add('dragging');
@@ -305,7 +338,7 @@
         });
     }
 
-    // --- 3. 利润计算器 (主界面版 - 修复) ---
+    // --- 3. 利润计算器 (主界面版) ---
     function runCalc() {
         const off = parseFloat(document.getElementById('calc_off').value) || 0;
         const my = parseFloat(document.getElementById('calc_my').value) || 0;
@@ -318,9 +351,7 @@
             badge.style.color = my < off ? "#10b981" : (my === off ? "#f59e0b" : "#ef4444");
             badge.style.background = my < off ? "#dcfce7" : (my === off ? "#fef3c7" : "#fee2e2");
         } else { 
-            badge.innerText = "等待输入"; 
-            badge.style.color = "#9ca3af"; 
-            badge.style.background = "#f3f4f6"; 
+            badge.innerText = "等待输入"; badge.style.color = "#9ca3af"; badge.style.background = "#f3f4f6"; 
         }
 
         const totalPaid = my + (my > 0 && my < 35 ? 10 : 0);
@@ -336,34 +367,73 @@
         mEl.innerText = margin.toFixed(2) + "%";
         mEl.style.color = margin >= 30 ? "#10b981" : (margin > 0 ? "#f59e0b" : "#ef4444");
         
-        saveCalcState();
-    }
-    function saveCalcState() {
-        const s = { name: document.getElementById('calc_name').value, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value };
-        localStorage.setItem('calc_state_v53', JSON.stringify(s));
-    }
-    function loadCalcState() {
-        try {
-            const s = JSON.parse(localStorage.getItem('calc_state_v53'));
-            if(s) { document.getElementById('calc_name').value = s.name||''; document.getElementById('calc_off').value = s.off||''; document.getElementById('calc_my').value = s.my||''; document.getElementById('calc_cost').value = s.cost||''; document.getElementById('calc_ship').value = s.ship||''; runCalc(); }
-        } catch(e){}
-    }
-    function resetCalc() { ['calc_name','calc_off','calc_my','calc_cost','calc_ship'].forEach(id=>document.getElementById(id).value=''); runCalc(); localStorage.removeItem('calc_state_v53'); }
-    function exportCalcRow() {
-        const csv = `\uFEFFSKU名称,售价,采购,运费,总成本,单品利润,净利率\n${document.getElementById('calc_name').value||'未命名'},${document.getElementById('calc_my').value||0},${document.getElementById('calc_cost').value||0},${document.getElementById('calc_ship').value||0},${document.getElementById('calc_total_cost').innerText},${document.getElementById('calc_profit').innerText.replace('$ ','')},${document.getElementById('calc_margin').innerText}`;
-        downloadCSV(csv, '单品利润核算_备份.csv');
+        // 实时保存草稿
+        const draft = { name: document.getElementById('calc_name').value, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value };
+        localStorage.setItem('calc_draft_v53', JSON.stringify(draft));
     }
 
-    // --- 极简安全导出/导入 CSV ---
+    function saveCurrentProduct() {
+        const n = document.getElementById('calc_name').value.trim();
+        if(!n) return showToast("必须填写商品名称才能存档！");
+        const data = { 
+            name: n, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, 
+            cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value 
+        };
+        
+        let list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        const existingIndex = list.findIndex(i => i.name === n);
+        if(existingIndex > -1) { list[existingIndex] = data; } else { list.unshift(data); }
+        
+        localStorage.setItem('profit_list_v53', JSON.stringify(list));
+        loadCalcHistoryUI();
+        showToast("已成功存档记忆！");
+    }
+
+    function loadCalcHistoryUI() {
+        const cloud = document.getElementById('calcHistoryTags');
+        const list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        cloud.innerHTML = list.length ? '' : '<span style="font-size:12px;color:#ccc">暂无历史存档记录</span>';
+        
+        list.forEach(item => {
+            const tag = document.createElement('div'); tag.className = 'tag';
+            tag.innerHTML = `<span>${esc(item.name)}</span><i class="fa-solid fa-xmark" onclick="delCalcHistory('${esc(item.name)}', event)" style="font-size:10px;opacity:0.5;margin-left:4px;"></i>`;
+            tag.onclick = () => {
+                document.getElementById('calc_name').value = item.name;
+                document.getElementById('calc_off').value = item.off;
+                document.getElementById('calc_my').value = item.my;
+                document.getElementById('calc_cost').value = item.cost;
+                document.getElementById('calc_ship').value = item.ship;
+                runCalc();
+                showToast("已恢复数据");
+            };
+            cloud.appendChild(tag);
+        });
+    }
+
+    function delCalcHistory(name, ev) {
+        ev.stopPropagation();
+        let list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        list = list.filter(i => i.name !== name);
+        localStorage.setItem('profit_list_v53', JSON.stringify(list));
+        loadCalcHistoryUI();
+    }
+
+    function resetCalc() { 
+        ['calc_name','calc_off','calc_my','calc_cost','calc_ship'].forEach(id => document.getElementById(id).value = ''); 
+        runCalc(); 
+        localStorage.removeItem('calc_draft_v53');
+    }
+
+    // --- 导出/导入 CSV ---
     function exportData(key, filename) {
         try {
             let data = JSON.parse(localStorage.getItem(key) || '[]');
-            if(data.length === 0) return showToast("当前模块无数据");
+            if(data.length === 0) return showToast("当前模块无数据，无法导出");
             let csv = "\uFEFF" + Object.keys(data[0]).join(",") + "\n";
             data.forEach(row => {
                 csv += Object.keys(data[0]).map(k => {
                     let v = row[k] ? String(row[k]) : '';
-                    if(k === 'img' && v.length > 200) return '"[BASE64_IMAGE_OMITTED]"';
+                    if(k === 'img' && v.length > 200) return '"[BASE64_IMAGE]"'; 
                     return `"${v.replace(/"/g, '""')}"`;
                 }).join(",") + "\n";
             });
@@ -393,6 +463,7 @@
                     headers.forEach((h, x) => obj[h] = cols[x] ? cols[x].replace(/^"|"$/g,'').replace(/""/g,'"') : '');
                     result.push(obj);
                 }
+                
                 let key = type === 'issue' ? 'issue_db_v53' : (type === 'sku' ? 'sku_radar_v53' : 'fb_ads_v53');
                 localStorage.setItem(key, JSON.stringify(result));
                 showToast("导入成功！正在重载面板...");
@@ -403,19 +474,7 @@
     }
     function downloadCSV(c, n) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([c], {type:'text/csv;charset=utf-8;'})); a.download = n; a.click(); }
 
-    // --- 时钟 & 汇率 (修复时间格式 bug) ---
-    function startClocks() {
-        const update = () => {
-            [{id:'bj',z:'Asia/Shanghai'},{id:'la',z:'America/Los_Angeles'},{id:'uk',z:'Europe/London'},{id:'cz',z:'Europe/Prague'},{id:'au',z:'Australia/Sydney'}].forEach(z => {
-                // 使用 Intl.DateTimeFormat 确保格式永远都是 00:00:00，防止被 slice 截断
-                const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: z.z, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-                document.getElementById(`time-${z.id}`).innerText = formatter.format(new Date());
-            });
-        }; update(); setInterval(update, 1000);
-    }
-    async function fetchRate() { try { const r = await fetch('https://open.er-api.com/v6/latest/USD'); const d = await r.json(); if(d?.rates?.CNY) { globalRate = d.rates.CNY; document.getElementById('rateLabel').innerText = globalRate.toFixed(4); runCalc(); } } catch(e){} }
-
-    // --- 任务模块 (重写为 input 修复焦点丢失) ---
+    // --- 任务模块 ---
     function checkDailyReset() { const t = new Date().toLocaleDateString(); if(localStorage.getItem('lr_v53') !== t) { let l = JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); localStorage.setItem('lr_v53', t); } }
     
     function loadWorkTasks() {
@@ -424,10 +483,9 @@
             const el = document.getElementById(`${t}List`); el.innerHTML = '';
             l.forEach((i, x) => {
                 const d = document.createElement('div'); d.className = `task-item fade-in ${i.done?'done':''}`; d.setAttribute('draggable','true');
-                // 核心修复：把 contenteditable 换成原生的 input，杜绝 bug
                 d.innerHTML = `
                     <input type="checkbox" ${i.done?'checked':''} onchange="togTask('${t}',${x})">
-                    <input type="text" class="task-input" value="${i.text}" onchange="editTask('${t}',${x},this)" placeholder="输入内容...">
+                    <input type="text" class="task-input" value="${esc(i.text)}" oninput="editTask('${t}',${x},this)" placeholder="输入内容..." spellcheck="false">
                     <button class="btn-icon" onclick="delTask('${t}',${x})"><i class="fa-solid fa-times"></i></button>
                 `;
                 el.appendChild(d);
@@ -441,22 +499,47 @@
     function manualResetDaily() { let l=JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); loadWorkTasks(); showToast("日常打卡已重置"); }
     function saveTasks(id) { const t=id.replace('List',''); const i=Array.from(document.getElementById(id).children).map(d=>({text:d.querySelector('.task-input').value,done:d.querySelector('input[type="checkbox"]').checked})); localStorage.setItem(`work_${t}`,JSON.stringify(i)); }
 
-    // --- 售后模块 ---
+    // --- 售后模块 (终极修复 Bug 区) ---
     function loadIssues() {
         let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]');
         const sort = document.getElementById('issueSort').value;
-        d.sort((a,b) => sort === 'date-desc' ? new Date(b.date)-new Date(a.date) : (getDaysElapsed(b.date)-getDaysElapsed(a.date)));
+        d.sort((a,b) => {
+            if(sort === 'date-desc') return new Date(b.date) - new Date(a.date);
+            if(sort === 'date-asc') return new Date(a.date) - new Date(b.date);
+            if(sort === 'order-asc') return (a.order||'').localeCompare(b.order||'');
+            if(sort === 'order-desc') return (b.order||'').localeCompare(a.order||'');
+            return getDaysElapsed(b.date) - getDaysElapsed(a.date);
+        });
         const body = document.getElementById('issueBody'); body.innerHTML='';
         d.forEach(i => {
             const tr = document.createElement('tr'); tr.className='issue-row fade-in'; tr.setAttribute('draggable','true');
             const days = getDaysElapsed(i.date);
-            tr.innerHTML = `<td style="padding-left:20px"><input type="date" value="${i.date}" onchange="persistIssues()"></td><td style="text-align:center;"><span class="status-tag" style="background:${days>3?'#fee2e2':'#fef3c7'}; color:${days>3?'#991b1b':'#b45309'}">${days}天</span></td><td><input type="text" value="${i.order}" placeholder="Order#" oninput="persistIssues()"></td><td><textarea class="textarea-pro" placeholder="详情" oninput="persistIssues()">${i.issue}</textarea></td><td><textarea class="textarea-pro" placeholder="进度" oninput="persistIssues()">${i.process}</textarea></td><td><select onchange="persistIssues(); this.closest('tr').style.opacity=this.value==='solved'?'0.5':'1'"><option value="pending" ${i.status==='pending'?'selected':''}>⏳ 处理中</option><option value="solved" ${i.status==='solved'?'selected':''}>✅ 完结</option></select></td><td style="text-align:center"><button class="btn-icon" onclick="this.closest('tr').remove();persistIssues()"><i class="fa-solid fa-trash"></i></button></td>`;
+            tr.innerHTML = `<td style="padding-left:20px"><input type="date" value="${esc(i.date)}" onchange="persistIssues()"></td><td style="text-align:center;"><span class="status-tag" style="background:${days>3?'#fee2e2':'#fef3c7'}; color:${days>3?'#991b1b':'#b45309'}">${days}天</span></td><td><input type="text" value="${esc(i.order)}" placeholder="Order#" oninput="persistIssues()"></td><td><textarea class="textarea-pro" placeholder="详情" oninput="persistIssues()">${esc(i.issue)}</textarea></td><td><textarea class="textarea-pro" placeholder="进度" oninput="persistIssues()">${esc(i.process)}</textarea></td><td><select onchange="persistIssues(); this.closest('tr').style.opacity=this.value==='solved'?'0.5':'1'"><option value="pending" ${i.status==='pending'?'selected':''}>⏳ 处理中</option><option value="solved" ${i.status==='solved'?'selected':''}>✅ 完结</option></select></td><td style="text-align:center"><button class="btn-icon" onclick="this.closest('tr').remove();persistIssues()"><i class="fa-solid fa-trash"></i></button></td>`;
             if(i.status==='solved') tr.style.opacity='0.5';
             body.appendChild(tr);
         });
     }
-    function addIssueRow() { let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]'); d.unshift({ date: new Date().toISOString().split('T')[0], order: '', issue: '', process: '', status: 'pending' }); localStorage.setItem('issue_db_v53', JSON.stringify(d)); loadIssues(); }
-    function persistIssues() { const r = Array.from(document.querySelectorAll('#issueBody tr')).map(row => ({ date: row.querySelector('input[type="date"]').value, order: r.querySelector('input[type="text"]').value, issue: r.querySelectorAll('textarea')[0].value, process: r.querySelectorAll('textarea')[1].value, status: r.querySelector('select').value })); localStorage.setItem('issue_db_v53', JSON.stringify(r)); }
+    
+    // 强制先保存再添加，绝对避免数据重置的 Bug
+    function addIssueRow() { 
+        persistIssues(); 
+        let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]'); 
+        d.unshift({ date: new Date().toISOString().split('T')[0], order: '', issue: '', process: '', status: 'pending' }); 
+        localStorage.setItem('issue_db_v53', JSON.stringify(d)); 
+        loadIssues(); 
+    }
+    
+    function persistIssues() { 
+        const r = Array.from(document.querySelectorAll('#issueBody tr')).map(row => ({ 
+            date: row.querySelector('input[type="date"]').value, 
+            order: row.querySelector('input[type="text"]').value, 
+            issue: row.querySelectorAll('textarea')[0].value, 
+            process: row.querySelectorAll('textarea')[1].value, 
+            status: row.querySelector('select').value 
+        })); 
+        localStorage.setItem('issue_db_v53', JSON.stringify(r)); 
+    }
+    
     function filterIssues() { const k = document.getElementById('issueSearch').value.toLowerCase(); document.querySelectorAll('#issueBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(k) ? '' : 'none'); }
     function getDaysElapsed(d) { const s=new Date(d||new Date()), n=new Date(); return Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(s.getFullYear(),s.getMonth(),s.getDate()))/(86400000)); }
 
@@ -470,12 +553,23 @@
             let st = '<span class="status-tag status-wait">待填写</span>';
             if(item.name && item.shipDate) st = isLate ? '<span class="status-tag status-late">⚠ 已逾期</span>' : '<span class="status-tag status-ok">🟢 运输中</span>';
             const tr = document.createElement('tr'); tr.className='fade-in';
-            tr.innerHTML = `<td style="padding-left:20px"><input type="text" value="${item.name}" oninput="upSKU(${index},'name',this.value)"></td><td><input type="date" value="${item.shipDate}" onchange="upSKU(${index},'shipDate',this.value)"></td><td><input type="number" value="${item.duration}" oninput="upSKU(${index},'duration',this.value)"></td><td style="font-weight:700">${item.shipDate?arrDate.toLocaleDateString():'--'}</td><td>${st}</td><td><button class="btn-icon" onclick="delSKU(${index})"><i class="fa-solid fa-trash"></i></button></td>`;
+            tr.innerHTML = `<td style="padding-left:20px"><input type="text" value="${esc(item.name)}" oninput="upSKU(${index},'name',this.value)"></td><td><input type="date" value="${esc(item.shipDate)}" onchange="upSKU(${index},'shipDate',this.value)"></td><td><input type="number" value="${esc(item.duration)}" oninput="upSKU(${index},'duration',this.value)"></td><td style="font-weight:700">${item.shipDate?arrDate.toLocaleDateString():'--'}</td><td>${st}</td><td><button class="btn-icon" onclick="delSKU(${index})"><i class="fa-solid fa-trash"></i></button></td>`;
             c.appendChild(tr);
         });
     }
-    function addSKULogix() { let l=JSON.parse(localStorage.getItem('sku_radar_v53')||'[]'); l.push({name:'',shipDate:'',duration:15}); localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
-    function upSKU(i,f,v) { let l=JSON.parse(localStorage.getItem('sku_radar_v53')); l[i][f]=v; localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
+    function addSKULogix() { 
+        let l=JSON.parse(localStorage.getItem('sku_radar_v53')||'[]'); 
+        l.push({name:'',shipDate:'',duration:15}); 
+        localStorage.setItem('sku_radar_v53',JSON.stringify(l)); 
+        loadSKULogix(); 
+    }
+    function upSKU(i,f,v) { 
+        let l=JSON.parse(localStorage.getItem('sku_radar_v53')); 
+        l[i][f]=v; 
+        localStorage.setItem('sku_radar_v53',JSON.stringify(l)); 
+        // 只在修改日期和时效时重载表格以更新状态，修改名称不重载以免丢失焦点
+        if(f !== 'name') loadSKULogix(); 
+    }
     function delSKU(i) { let l=JSON.parse(localStorage.getItem('sku_radar_v53')); l.splice(i,1); localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
 
     // --- FB 广告监控 ---
@@ -484,11 +578,11 @@
         const c = document.getElementById('fbContainer'); c.innerHTML = '';
         l.forEach((item, i) => {
             const d = document.createElement('div'); d.className = 'fb-row fade-in'; d.setAttribute('draggable','true');
-            d.innerHTML = `<div class="fb-img-box" onclick="document.getElementById('fbFile${i}').click()"><img src="${item.img||''}"><input type="file" id="fbFile${i}" hidden accept="image/*" onchange="handleFBImg(${i},event)"></div><input type="text" value="${item.adName||''}" placeholder="广告名" oninput="upFB(${i},'adName',this.value)"><input type="text" value="${item.code||''}" placeholder="编码" oninput="upFB(${i},'code',this.value)"><input type="number" value="${item.heart||0}" oninput="upFB(${i},'heart',this.value)"><input type="number" value="${item.comm||0}" oninput="upFB(${i},'comm',this.value)"><input type="number" value="${item.like||0}" oninput="upFB(${i},'like',this.value)"><button class="btn-icon" onclick="delFB(${i})"><i class="fa-solid fa-trash"></i></button>`;
+            d.innerHTML = `<div class="fb-img-box" onclick="document.getElementById('fbFile${i}').click()"><img src="${esc(item.img||'')}"><input type="file" id="fbFile${i}" hidden accept="image/*" onchange="handleFBImg(${i},event)"></div><input type="text" value="${esc(item.adName||'')}" placeholder="广告名" oninput="upFB(${i},'adName',this.value)"><input type="text" value="${esc(item.code||'')}" placeholder="编码" oninput="upFB(${i},'code',this.value)"><input type="number" value="${esc(item.heart||0)}" oninput="upFB(${i},'heart',this.value)"><input type="number" value="${esc(item.comm||0)}" oninput="upFB(${i},'comm',this.value)"><input type="number" value="${esc(item.like||0)}" oninput="upFB(${i},'like',this.value)"><button class="btn-icon" onclick="delFB(${i})"><i class="fa-solid fa-trash"></i></button>`;
             c.appendChild(d);
         });
     }
-    function addFBRow() { let l=JSON.parse(localStorage.getItem('fb_ads_v53')||'[]'); l.push({img:'',adName:'',code:'',heart:0,comm:0,like:0}); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
+    function addFBRow() { saveFB(); let l=JSON.parse(localStorage.getItem('fb_ads_v53')||'[]'); l.push({img:'',adName:'',code:'',heart:0,comm:0,like:0}); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
     function upFB(i,f,v) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l[i][f]=v; localStorage.setItem('fb_ads_v53',JSON.stringify(l)); }
     function delFB(i) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l.splice(i,1); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
     function handleFBImg(i,ev) { 
