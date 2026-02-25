@@ -3,88 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1400">
-    <title>跨境运营灵动仪表盘 v5.2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>跨境运营灵动仪表盘 v5.3.3 (终极稳定版)</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --primary: #4f46e5; --primary-hover: #4338ca;
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
             --bg: #f3f4f6; --card-white: #ffffff; --text-title: #1f2937; --text-body: #4b5563;
         }
-        body { margin: 0; padding: 25px; font-family: 'Montserrat', 'Microsoft YaHei', sans-serif; background-color: var(--bg); color: var(--text-body); min-width: 1200px; }
+        
+        body { margin: 0; padding: 25px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg); color: var(--text-body); min-width: 1200px; scroll-behavior: smooth; }
         .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-        /* 时钟 */
-        .world-clocks { display: flex; gap: 15px; padding: 15px 25px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); justify-content: space-between; align-items: center; }
+        /* 动画类 */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 顶部时钟 (修复字符与等宽字体) */
+        .world-clocks { display: flex; gap: 15px; padding: 15px 25px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .clock-item { display: flex; align-items: center; gap: 10px; padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.1); }
         .clock-item:last-child { border: none; padding-right: 0; }
         .flag { font-size: 22px; }
         .clock-info { display: flex; flex-direction: column; }
         .clock-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .clock-time { font-size: 18px; color: #38bdf8; font-weight: 700; font-family: 'Montserrat', monospace; }
+        .clock-time { font-size: 18px; color: #38bdf8; font-weight: bold; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; letter-spacing: 1px; }
 
-        /* 卡片 */
-        .card { background: var(--card-white); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+        /* 核心卡片容器 */
+        .card { background: var(--card-white); border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border: 1px solid #e5e7eb; transition: transform 0.2s; }
         .card-header { padding: 15px 25px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 12px 12px 0 0; }
         .card-title { font-size: 15px; font-weight: 700; color: var(--text-title); display: flex; align-items: center; gap: 8px; }
         .card-body { padding: 25px; }
 
-        /* 输入控件 */
-        .input-group { display: grid; grid-template-columns: 2fr 1fr 1fr 120px; gap: 20px; align-items: flex-end; }
-        .field-label { font-size: 12px; font-weight: 700; color: #9ca3af; margin-bottom: 6px; }
-        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s; background: #f9fafb; box-sizing: border-box; font-family: inherit; }
-        input:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        /* 输入控件交互 */
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s; background: #f9fafb; box-sizing: border-box; font-family: inherit; color: var(--text-title); }
+        input:focus, textarea:focus, select:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
 
-        /* 利润面板 */
+        /* 1. 任务看板 (修复输入 Bug) */
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .task-list-container { height: 320px; overflow-y: auto; padding-right: 5px; }
+        .task-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 6px 12px; background: #fff; border-radius: 6px; border: 1px solid #e5e7eb; cursor: grab; transition: 0.2s; }
+        .task-item:active { cursor: grabbing; background: #f0fdf4; }
+        .task-item.dragging { opacity: 0.5; background: #e0e7ff; border-style: dashed; }
+        .task-input { border: none; background: transparent; padding: 6px; box-shadow: none !important; font-size: 13px; font-weight: 500; cursor: text; border-radius: 4px; }
+        .task-input:focus { background: #f3f4f6; }
+        .task-item.done .task-input { text-decoration: line-through; color: #9ca3af; }
+        .task-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+
+        /* 3. 利润计算面板 (恢复内嵌式) */
+        .input-group { display: grid; grid-template-columns: 2fr 1fr 1fr 140px; gap: 20px; align-items: flex-end; }
+        .field-label { font-size: 12px; font-weight: 700; color: #9ca3af; margin-bottom: 6px; display: block; }
         .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #e5e7eb; }
         .metric-item { text-align: center; border-right: 1px solid #e5e7eb; padding: 0 10px; }
         .metric-item:last-child { border: none; }
-        .metric-input-box { background: #fff !important; border: 1px solid #d1d5db !important; text-align: center; font-size: 18px !important; font-weight: 700 !important; color: var(--text-title); }
+        .metric-input-box { background: #fff !important; border: 1px solid #d1d5db !important; text-align: center; font-size: 18px !important; font-weight: 700 !important; color: var(--text-title); padding: 8px; }
         .metric-val { font-size: 24px; font-weight: 800; display: block; margin-top: 5px; color: var(--text-title); }
+        .metric-sub-val { font-size: 18px; font-weight: 700; display: block; margin-top: 8px; color: var(--text-body); }
 
-        /* 任务看板 */
-        .work-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .task-list-container { height: 320px; overflow-y: auto; padding-right: 5px; }
-        .task-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px 12px; background: #fff; border-radius: 6px; border: 1px solid #e5e7eb; transition: 0.2s; }
-        .task-item:hover { border-color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .task-item.done span { text-decoration: line-through; color: #9ca3af; }
-        .task-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; border-color: #cbd5e1; }
+        /* 表格通用 */
+        .sku-table, .issue-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .sku-table th, .issue-table th { text-align: left; padding: 12px 15px; font-size: 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-weight: 600; }
+        .sku-table td, .issue-table td { padding: 10px 15px; border-bottom: 1px solid #f3f4f6; vertical-align: top; background: #fff; }
+        .issue-row { cursor: grab; }
+        .issue-row:active { cursor: grabbing; }
+        .issue-row.dragging { opacity: 0.4; }
+        .textarea-pro { min-height: 70px; resize: vertical; padding: 8px; font-size: 13px; line-height: 1.5; }
 
-        /* SKU 雷达 */
-        .sku-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .sku-table th { background: #f9fafb; padding: 12px; text-align: left; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
-        .sku-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
-        .status-tag { padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+        /* 状态标签 */
+        .status-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
         .status-ok { background: #dcfce7; color: #166534; }
-        .status-late { background: #fee2e2; color: #991b1b; animation: blink 2s infinite; }
+        .status-late { background: #fee2e2; color: #991b1b; }
         .status-wait { background: #f3f4f6; color: #9ca3af; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-        /* FB 广告 (新增名称列) */
+        /* FB 广告 */
         .fb-header { display: grid; grid-template-columns: 80px 1fr 1.5fr 1fr 1fr 1fr 60px; gap: 15px; padding: 10px 20px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; font-size: 12px; font-weight: 700; color: #6b7280; }
-        .fb-row { display: grid; grid-template-columns: 80px 1fr 1.5fr 1fr 1fr 1fr 60px; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #f3f4f6; align-items: center; transition: 0.2s; }
-        .fb-row:hover { background: #fdfbfc; }
+        .fb-row { display: grid; grid-template-columns: 80px 1fr 1.5fr 1fr 1fr 1fr 60px; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #f3f4f6; align-items: center; background: #fff; cursor: grab; }
+        .fb-row.dragging { opacity: 0.5; background: #f8fafc; }
         .fb-img-box { width: 60px; height: 60px; background: #e5e7eb; border-radius: 6px; cursor: pointer; overflow: hidden; position: relative; border: 1px solid #d1d5db; }
         .fb-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .fb-img-box:hover::after { content: '更换'; position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
-        /* 售后表格 */
-        .issue-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .issue-table th { text-align: left; padding: 12px 15px; font-size: 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; color: #6b7280; }
-        .issue-table td { padding: 10px 15px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
-        .textarea-pro { min-height: 70px; height: 70px; resize: vertical; padding: 8px; font-size: 13px; line-height: 1.5; }
-
         /* 按钮与通用 */
-        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: none; font-size: 13px; transition: 0.2s; font-family: inherit; }
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; font-size: 13px; transition: 0.2s; font-family: inherit; }
+        .btn:active { transform: scale(0.96); }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #4338ca; }
-        .btn-ghost { background: white; color: #6b7280; border: 1px solid #d1d5db; }
-        .btn-ghost:hover { border-color: var(--danger); color: var(--danger); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-ghost { background: white; color: #4b5563; border-color: #d1d5db; }
+        .btn-ghost:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
+        .btn-danger-ghost { background: white; color: var(--danger); border-color: #fecaca; }
+        .btn-danger-ghost:hover { background: #fef2f2; }
         .btn-mini { padding: 4px 8px; font-size: 11px; }
-        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tag { background: #fff; border: 1px solid #e5e7eb; padding: 4px 10px; border-radius: 15px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; color: #4b5563; }
-        .tag.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1f2937; color: #fff; padding: 12px 24px; border-radius: 8px; display: none; z-index: 9999; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .btn-icon { background: transparent; border: none; color: #9ca3af; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+        .btn-icon:hover { color: var(--danger); }
+        .action-group { display: flex; gap: 8px; align-items: center; }
+
+        /* Toast 提示 */
+        .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 12px 24px; border-radius: 8px; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -102,40 +115,35 @@
     <header style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 15px;">
             <div style="background: var(--primary); color:white; width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px;">
-                <i class="fa-solid fa-chart-simple"></i>
+                <i class="fa-solid fa-bolt"></i>
             </div>
             <div>
-                <h1 style="margin:0; font-size:18px; color: var(--text-title); font-weight: 800;">跨境运营灵动工作台 <span style="font-weight:400; opacity:0.6; font-size:14px;">v5.2</span></h1>
-                <p style="margin:0; font-size:12px; color:var(--text-body);">实时汇率 (USD/CNY): <strong id="rateLabel" style="color:var(--primary)">7.1200</strong></p>
+                <h1 style="margin:0; font-size:18px; color: var(--text-title); font-weight: 800;">跨境运营核心工作台 <span style="font-weight:normal; opacity:0.5; font-size:13px;">v5.3.3</span></h1>
+                <p style="margin:0; font-size:12px; color:var(--text-body);">结算汇率: <strong id="rateLabel" style="color:var(--primary)">7.1200</strong></p>
             </div>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-ghost" onclick="exportToExcel()"><i class="fa-solid fa-file-excel"></i> 导出Excel</button>
-            <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()"><i class="fa-solid fa-upload"></i> 恢复数据</button>
-            <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-            <button class="btn btn-ghost" style="color:var(--danger); border-color:#fecaca;" onclick="clearEverything()"><i class="fa-solid fa-trash"></i> 格式化</button>
-        </div>
+        <button class="btn btn-danger-ghost" onclick="clearEverything()"><i class="fa-solid fa-trash-can"></i> 格式化系统</button>
     </header>
 
     <div class="work-grid">
         <div class="card">
             <div class="card-header"><div class="card-title"><i class="fa-solid fa-star"></i> 重点任务</div></div>
             <div class="card-body">
-                <div id="todoList" class="task-list-container"></div>
-                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('todo')">+ 添加任务</button>
+                <div id="todoList" class="task-list-container" data-type="todo"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('todo')">+ 添加新任务</button>
             </div>
         </div>
         <div class="card">
             <div class="card-header"><div class="card-title"><i class="fa-regular fa-clock"></i> 今日日程</div></div>
             <div class="card-body">
-                <div id="scheduleList" class="task-list-container"></div>
+                <div id="scheduleList" class="task-list-container" data-type="schedule"></div>
                 <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('schedule')">+ 安排时段</button>
             </div>
         </div>
         <div class="card">
-            <div class="card-header"><div class="card-title"><i class="fa-solid fa-rotate"></i> 日常任务 </div></div>
+            <div class="card-header"><div class="card-title"><i class="fa-solid fa-rotate"></i> 日常固定</div><button class="btn-icon" onclick="manualResetDaily()"><i class="fa-solid fa-rotate-right"></i></button></div>
             <div class="card-body">
-                <div id="dailyList" class="task-list-container"></div>
+                <div id="dailyList" class="task-list-container" data-type="daily"></div>
                 <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('daily')">+ 增加固定项</button>
             </div>
         </div>
@@ -144,76 +152,78 @@
     <div class="card">
         <div class="card-header">
             <div class="card-title"><i class="fa-solid fa-headset"></i> 售后处理中心</div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <select id="issueSort" onchange="loadIssues()" style="padding:6px; border-radius:4px; border:1px solid #d1d5db;">
-                    <option value="date-desc">日期：从新到旧</option>
-                    <option value="days-desc">天数：从多到少</option>
-                </select>
-                <input type="text" id="issueSearch" placeholder="搜索订单..." oninput="filterIssues()" style="width:150px; padding:6px;">
-                <button class="btn btn-primary" onclick="addIssueRow()">新增记录</button>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('issue_db_v53', '售后记录')"><i class="fa-solid fa-download"></i></button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'issue')"></label>
+                <select id="issueSort" onchange="loadIssues()" style="padding:4px; font-size:12px; width:120px;"><option value="date-desc">日期新➡旧</option><option value="days-desc">天数多➡少</option></select>
+                <input type="text" id="issueSearch" placeholder="搜索单号..." oninput="filterIssues()" style="width:120px; padding:6px;">
+                <button class="btn btn-primary btn-mini" onclick="addIssueRow()"><i class="fa-solid fa-plus"></i></button>
             </div>
         </div>
         <div class="card-body" style="padding: 0;">
             <table class="issue-table">
-                <thead>
-                    <tr>
-                        <th style="width:120px; padding-left:20px;">登记日期</th>
-                        <th style="width:80px; text-align:center;">已过天数</th>
-                        <th style="width:150px;">订单编号</th>
-                        <th>异常详情</th>
-                        <th>进度动作</th>
-                        <th style="width:110px;">状态</th>
-                        <th style="width:50px;"></th>
-                    </tr>
-                </thead>
-                <tbody id="issueBody"></tbody>
+                <thead><tr><th style="width:120px; padding-left:20px;">登记日期</th><th style="width:80px; text-align:center;">已过天数</th><th style="width:150px;">订单编号</th><th>异常详情</th><th>进度动作</th><th style="width:100px;">状态</th><th style="width:50px;"></th></tr></thead>
+                <tbody id="issueBody" data-type="issue"></tbody>
             </table>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-calculator"></i> 利润即时分析</div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-ghost" onclick="resetAnalysisInputs()">清空输入</button>
-                <button class="btn btn-primary" onclick="saveCurrentProduct()">存档记忆</button>
+            <div class="card-title"><i class="fa-solid fa-calculator"></i> 利润即时分析面板</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="resetCalc()">清空内容</button>
+                <button class="btn btn-primary btn-mini" onclick="exportCalcRow()"><i class="fa-solid fa-download"></i> 导出此条</button>
             </div>
         </div>
         <div class="card-body">
             <div class="input-group">
-                <div><label class="field-label">商品名称 / SKU</label><input type="text" id="itemName" placeholder="例如：蓝牙耳机-黑色"></div>
-                <div><label class="field-label">竞品售价 ($)</label><input type="number" id="offPrice" step="0.01" oninput="calculate()"></div>
-                <div><label class="field-label">我司售价 ($)</label><input type="number" id="myPrice" step="0.01" oninput="calculate()"></div>
-                <div><label class="field-label">价格竞争力</label><div id="compBadge" style="padding:10px; border-radius:6px; font-weight:700; text-align:center; background:#f3f4f6; font-size:12px;">待输入</div></div>
+                <div><label class="field-label">商品名称 / SKU</label><input type="text" id="calc_name" placeholder="输入名称进行记录" oninput="saveCalcState()"></div>
+                <div><label class="field-label">竞品售价 ($)</label><input type="number" id="calc_off" step="0.01" oninput="runCalc()"></div>
+                <div><label class="field-label">我司售价 ($)</label><input type="number" id="calc_my" step="0.01" oninput="runCalc()"></div>
+                <div>
+                    <label class="field-label">价格竞争力</label>
+                    <div id="calc_comp" style="padding:10px; border-radius:6px; font-weight:700; text-align:center; background:#f3f4f6; font-size:13px; color:#9ca3af;">等待输入</div>
+                </div>
             </div>
-            <div class="tag-list" id="tagCloud"></div>
+            
             <div class="metrics-grid">
-                <div class="metric-item"><label class="field-label">采购成本 (¥)</label><input type="number" id="costCNY" oninput="calculate()" class="metric-input-box" placeholder="0"></div>
-                <div class="metric-item"><label class="field-label">头程运费 (¥)</label><input type="number" id="shipCNY" oninput="calculate()" class="metric-input-box" placeholder="0"></div>
-                <div class="metric-item"><label class="field-label">单品毛利</label><span class="metric-val" id="resProfit" style="color:var(--primary);">$ 0.00</span></div>
-                <div class="metric-item"><label class="field-label">建议售价 (30%利)</label><span class="metric-val" id="resRec" style="color:var(--success);">$ 0.00</span></div>
-                <div class="metric-item"><label class="field-label">净利率</label><span class="metric-val" id="resMargin">0.00%</span></div>
+                <div class="metric-item">
+                    <label class="field-label">采购成本 (¥)</label>
+                    <input type="number" id="calc_cost" class="metric-input-box" oninput="runCalc()" placeholder="0">
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">头程运费 (¥)</label>
+                    <input type="number" id="calc_ship" class="metric-input-box" oninput="runCalc()" placeholder="0">
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">总成本 ($)</label>
+                    <span class="metric-sub-val" id="calc_total_cost">0.00</span>
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">单品毛利 ($)</label>
+                    <span class="metric-val" id="calc_profit" style="color:var(--primary);">$ 0.00</span>
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">净利率</label>
+                    <span class="metric-val" id="calc_margin">0.00%</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-plane-departure"></i> SKU 物流雷达 (到仓提醒)</div>
-            <button class="btn btn-primary btn-mini" onclick="addSKULogix()">+ 新增监控</button>
+            <div class="card-title"><i class="fa-solid fa-plane-departure"></i> SKU 物流雷达</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('sku_radar_v53', '物流监控')"><i class="fa-solid fa-download"></i></button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'sku')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addSKULogix()"><i class="fa-solid fa-plus"></i></button>
+            </div>
         </div>
         <div class="card-body" style="padding:0">
             <table class="sku-table">
-                <thead>
-                    <tr>
-                        <th style="width:25%">SKU 名称</th>
-                        <th style="width:15%">发货日期</th>
-                        <th style="width:15%">预计时效 (天)</th>
-                        <th style="width:15%">预计到仓日</th>
-                        <th style="width:20%">状态提醒</th>
-                        <th style="width:10%">操作</th>
-                    </tr>
-                </thead>
+                <thead><tr><th style="padding-left:20px;">SKU 名称</th><th style="width:15%">发货日期</th><th style="width:15%">时效(天)</th><th style="width:15%">预计到仓</th><th style="width:15%">状态</th><th style="width:10%">操作</th></tr></thead>
                 <tbody id="skuBody"></tbody>
             </table>
         </div>
@@ -221,25 +231,22 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="card-title"><i class="fa-brands fa-facebook-f"></i> Facebook 广告表现监控</div>
-            <button class="btn btn-primary btn-mini" onclick="addFBRow()">+ 新增帖子</button>
+            <div class="card-title"><i class="fa-brands fa-facebook-f"></i> FB 广告监控</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('fb_ads_v53', 'FB广告')"><i class="fa-solid fa-download"></i></button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i><input type="file" hidden onchange="importCSV(event, 'fb')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addFBRow()"><i class="fa-solid fa-plus"></i></button>
+            </div>
         </div>
         <div class="card-body" style="padding:0">
-            <div class="fb-header">
-                <div>预览图</div>
-                <div>广告名称</div> <div>帖子编码</div>
-                <div><i class="fa-solid fa-heart" style="color:#f91880"></i> 心情数</div>
-                <div><i class="fa-solid fa-comment" style="color:#4f46e5"></i> 评论数</div>
-                <div><i class="fa-solid fa-thumbs-up" style="color:#1877f2"></i> 点赞数</div>
-                <div>操作</div>
-            </div>
-            <div id="fbContainer"></div>
+            <div class="fb-header"><div>预览图</div><div>广告名称</div><div>帖子编码</div><div>心情数</div><div>评论数</div><div>点赞数</div><div>操作</div></div>
+            <div id="fbContainer" data-type="fb"></div>
         </div>
     </div>
 
 </div>
 
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast">系统提示</div>
 
 <script>
     let globalRate = 7.12;
@@ -247,242 +254,256 @@
     window.onload = () => {
         startClocks();
         fetchRate();
-        loadHistory();
         loadIssues();
         loadWorkTasks();
         loadFBTable();
         loadSKULogix();
         checkDailyReset();
+        loadCalcState();
+        initNativeDragAndDrop(); 
     };
 
-    // --- 导出 Excel 功能 (新增) ---
-    function exportToExcel() {
-        // 构建 CSV 内容 (BOM头解决中文乱码)
-        let csvContent = "\uFEFF";
-        // 表头
-        csvContent += "登记日期,已过天数,订单编号,异常详情,进度动作,状态\n";
-        
-        let data = JSON.parse(localStorage.getItem('issue_db_v4') || '[]');
-        data.forEach(row => {
-            const days = getDaysElapsed(row.date);
-            // 处理内容中的逗号和换行符，防止破坏 CSV 格式
-            const clean = (text) => `"${(text || '').replace(/"/g, '""')}"`;
-            csvContent += `${clean(row.date)},${days},${clean(row.order)},${clean(row.issue)},${clean(row.process)},${clean(row.status === 'solved' ? '已结案' : '处理中')}\n`;
-        });
+    // --- 极简原生拖拽实现 ---
+    let draggedItem = null;
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `售后记录备份_${new Date().toLocaleDateString()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast("Excel (CSV) 文件已下载");
-    }
-
-    // --- 其他原有逻辑 ---
-    function startClocks() {
-        const update = () => {
-            const zones = [{id:'bj',z:'Asia/Shanghai'},{id:'la',z:'America/Los_Angeles'},{id:'uk',z:'Europe/London'},{id:'cz',z:'Europe/Prague'},{id:'au',z:'Australia/Sydney'}];
-            zones.forEach(z => {
-                const now = new Date();
-                document.getElementById(`time-${z.id}`).innerText = now.toLocaleTimeString('en-GB', {timeZone: z.z, hour12: false});
+    function initNativeDragAndDrop() {
+        const containers = ['todoList', 'scheduleList', 'dailyList', 'issueBody', 'fbContainer'];
+        containers.forEach(id => {
+            const container = document.getElementById(id);
+            if(!container) return;
+            
+            container.addEventListener('dragstart', (e) => {
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                    e.preventDefault(); return; 
+                }
+                draggedItem = e.target.closest('.task-item, .issue-row, .fb-row');
+                if(!draggedItem) return;
+                draggedItem.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
             });
-        };
-        update(); setInterval(update, 1000);
+
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if(!draggedItem) return;
+                const target = e.target.closest('.task-item, .issue-row, .fb-row');
+                if(target && target !== draggedItem && target.parentNode === container) {
+                    const rect = target.getBoundingClientRect();
+                    const next = (e.clientY - rect.top)/(rect.bottom - rect.top) > 0.5;
+                    container.insertBefore(draggedItem, next ? target.nextSibling : target);
+                }
+            });
+
+            container.addEventListener('dragend', () => {
+                if(draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                    if(id.includes('List')) saveTasks(id);
+                    else if(id === 'issueBody') persistIssues();
+                    else if(id === 'fbContainer') saveFB();
+                }
+            });
+        });
     }
 
-    async function fetchRate() {
-        try {
-            const res = await fetch('https://open.er-api.com/v6/latest/USD');
-            const data = await res.json();
-            if(data?.rates?.CNY) { globalRate = data.rates.CNY; document.getElementById('rateLabel').innerText = globalRate.toFixed(4); calculate(); }
-        } catch(e) {}
-    }
+    // --- 3. 利润计算器 (主界面版 - 修复) ---
+    function runCalc() {
+        const off = parseFloat(document.getElementById('calc_off').value) || 0;
+        const my = parseFloat(document.getElementById('calc_my').value) || 0;
+        const cost = parseFloat(document.getElementById('calc_cost').value) || 0;
+        const ship = parseFloat(document.getElementById('calc_ship').value) || 0;
 
-    function calculate() {
-        const off = parseFloat(document.getElementById('offPrice').value) || 0;
-        const my = parseFloat(document.getElementById('myPrice').value) || 0;
-        const cost = parseFloat(document.getElementById('costCNY').value) || 0;
-        const ship = parseFloat(document.getElementById('shipCNY').value) || 0;
-        
-        const badge = document.getElementById('compBadge');
+        const badge = document.getElementById('calc_comp');
         if(off && my) {
-            if(my < off) { badge.innerHTML = "价格优势"; badge.style.color = "#fff"; badge.style.background = "var(--success)"; }
-            else if(my == off) { badge.innerHTML = "价格持平"; badge.style.color = "#fff"; badge.style.background = "var(--warning)"; }
-            else { badge.innerHTML = "价格劣势"; badge.style.color = "#fff"; badge.style.background = "var(--danger)"; }
+            badge.innerText = my < off ? "具备优势" : (my === off ? "价格持平" : "价格劣势");
+            badge.style.color = my < off ? "#10b981" : (my === off ? "#f59e0b" : "#ef4444");
+            badge.style.background = my < off ? "#dcfce7" : (my === off ? "#fef3c7" : "#fee2e2");
+        } else { 
+            badge.innerText = "等待输入"; 
+            badge.style.color = "#9ca3af"; 
+            badge.style.background = "#f3f4f6"; 
         }
 
         const totalPaid = my + (my > 0 && my < 35 ? 10 : 0);
-        const totalCostUSD = (cost + ship) / globalRate + (totalPaid * 0.04);
-        const profit = totalPaid - totalCostUSD;
+        const costUSD = (cost + ship) / globalRate;
+        const fee = totalPaid * 0.04;
+        const totalCost = costUSD + fee;
+        const profit = totalPaid > 0 ? totalPaid - totalCost : 0;
         const margin = totalPaid > 0 ? (profit / totalPaid) * 100 : 0;
-        const rec = ((cost + ship) / globalRate) / 0.66;
 
-        document.getElementById('resProfit').innerText = `$ ${my > 0 ? profit.toFixed(2) : "0.00"}`;
-        document.getElementById('resMargin').innerText = margin.toFixed(2) + "%";
-        document.getElementById('resMargin').style.color = margin >= 30 ? "var(--success)" : "var(--danger)";
-        document.getElementById('resRec').innerText = `$ ${my > 0 ? rec.toFixed(2) : "0.00"}`;
+        document.getElementById('calc_total_cost').innerText = totalCost.toFixed(2);
+        document.getElementById('calc_profit').innerText = `$ ${profit.toFixed(2)}`;
+        const mEl = document.getElementById('calc_margin');
+        mEl.innerText = margin.toFixed(2) + "%";
+        mEl.style.color = margin >= 30 ? "#10b981" : (margin > 0 ? "#f59e0b" : "#ef4444");
+        
+        saveCalcState();
+    }
+    function saveCalcState() {
+        const s = { name: document.getElementById('calc_name').value, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value };
+        localStorage.setItem('calc_state_v53', JSON.stringify(s));
+    }
+    function loadCalcState() {
+        try {
+            const s = JSON.parse(localStorage.getItem('calc_state_v53'));
+            if(s) { document.getElementById('calc_name').value = s.name||''; document.getElementById('calc_off').value = s.off||''; document.getElementById('calc_my').value = s.my||''; document.getElementById('calc_cost').value = s.cost||''; document.getElementById('calc_ship').value = s.ship||''; runCalc(); }
+        } catch(e){}
+    }
+    function resetCalc() { ['calc_name','calc_off','calc_my','calc_cost','calc_ship'].forEach(id=>document.getElementById(id).value=''); runCalc(); localStorage.removeItem('calc_state_v53'); }
+    function exportCalcRow() {
+        const csv = `\uFEFFSKU名称,售价,采购,运费,总成本,单品利润,净利率\n${document.getElementById('calc_name').value||'未命名'},${document.getElementById('calc_my').value||0},${document.getElementById('calc_cost').value||0},${document.getElementById('calc_ship').value||0},${document.getElementById('calc_total_cost').innerText},${document.getElementById('calc_profit').innerText.replace('$ ','')},${document.getElementById('calc_margin').innerText}`;
+        downloadCSV(csv, '单品利润核算_备份.csv');
     }
 
-    // --- SKU 物流雷达 (修复状态逻辑) ---
-    function loadSKULogix() {
-        const list = JSON.parse(localStorage.getItem('sku_radar') || '[]');
-        const container = document.getElementById('skuBody');
-        container.innerHTML = '';
-        list.forEach((item, index) => {
-            const arrDate = new Date(new Date(item.shipDate).getTime() + item.duration * 86400000);
-            const today = new Date(); today.setHours(0,0,0,0);
-            const isLate = today > arrDate;
-            
-            // 状态逻辑判断
-            let statusHtml = '<span class="status-tag status-wait">待填写</span>';
-            if(item.name && item.shipDate) {
-                statusHtml = isLate 
-                    ? '<span class="status-tag status-late">⚠ 已逾期</span>' 
-                    : '<span class="status-tag status-ok">🟢 运输中</span>';
-            }
+    // --- 极简安全导出/导入 CSV ---
+    function exportData(key, filename) {
+        try {
+            let data = JSON.parse(localStorage.getItem(key) || '[]');
+            if(data.length === 0) return showToast("当前模块无数据");
+            let csv = "\uFEFF" + Object.keys(data[0]).join(",") + "\n";
+            data.forEach(row => {
+                csv += Object.keys(data[0]).map(k => {
+                    let v = row[k] ? String(row[k]) : '';
+                    if(k === 'img' && v.length > 200) return '"[BASE64_IMAGE_OMITTED]"';
+                    return `"${v.replace(/"/g, '""')}"`;
+                }).join(",") + "\n";
+            });
+            downloadCSV(csv, `${filename}_Backup_${new Date().toISOString().slice(0,10)}.csv`);
+        } catch(e) { showToast("导出失败"); }
+    }
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="text" value="${item.name}" oninput="upSKU(${index},'name',this.value)"></td>
-                <td><input type="date" value="${item.shipDate}" onchange="upSKU(${index},'shipDate',this.value)"></td>
-                <td><input type="number" value="${item.duration}" oninput="upSKU(${index},'duration',this.value)"></td>
-                <td style="font-weight:700">${item.shipDate ? arrDate.toLocaleDateString() : '--'}</td>
-                <td>${statusHtml}</td>
-                <td><button class="btn-ghost" style="color:var(--danger);padding:4px;" onclick="delSKU(${index})"><i class="fa-solid fa-trash"></i></button></td>
-            `;
-            container.appendChild(tr);
-        });
+    function importCSV(ev, type) {
+        const file = ev.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const lines = e.target.result.split('\n').filter(l=>l.trim().length > 0);
+                if(lines.length < 2) return showToast("文件数据为空");
+                const headers = lines[0].split(',').map(h=>h.replace(/"/g,'').trim());
+                const result = [];
+                for(let i=1; i<lines.length; i++) {
+                    const rowStr = lines[i];
+                    let cols = [], curr = '', inQuote = false;
+                    for(let c of rowStr) {
+                        if(c === '"') inQuote = !inQuote;
+                        else if(c === ',' && !inQuote) { cols.push(curr); curr=''; }
+                        else curr += c;
+                    }
+                    cols.push(curr);
+                    let obj = {};
+                    headers.forEach((h, x) => obj[h] = cols[x] ? cols[x].replace(/^"|"$/g,'').replace(/""/g,'"') : '');
+                    result.push(obj);
+                }
+                let key = type === 'issue' ? 'issue_db_v53' : (type === 'sku' ? 'sku_radar_v53' : 'fb_ads_v53');
+                localStorage.setItem(key, JSON.stringify(result));
+                showToast("导入成功！正在重载面板...");
+                setTimeout(()=>location.reload(), 1000);
+            } catch(err) { showToast("导入解析错误，请确保使用系统导出的CSV"); }
+        };
+        reader.readAsText(file);
     }
-    function addSKULogix() {
-        let list = JSON.parse(localStorage.getItem('sku_radar')||'[]');
-        list.push({name:'', shipDate:'', duration:15});
-        localStorage.setItem('sku_radar',JSON.stringify(list)); loadSKULogix();
-    }
-    function upSKU(i,f,v) { let l=JSON.parse(localStorage.getItem('sku_radar')); l[i][f]=v; localStorage.setItem('sku_radar',JSON.stringify(l)); loadSKULogix(); }
-    function delSKU(i) { let l=JSON.parse(localStorage.getItem('sku_radar')); l.splice(i,1); localStorage.setItem('sku_radar',JSON.stringify(l)); loadSKULogix(); }
+    function downloadCSV(c, n) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([c], {type:'text/csv;charset=utf-8;'})); a.download = n; a.click(); }
 
-    // --- FB 广告 (新增名称) ---
-    function loadFBTable() {
-        const list = JSON.parse(localStorage.getItem('fb_ads_v52') || '[]');
-        const container = document.getElementById('fbContainer');
-        container.innerHTML = '';
-        list.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = 'fb-row';
-            div.innerHTML = `
-                <div class="fb-img-box" onclick="document.getElementById('fbFile${index}').click()">
-                    <img src="${item.img || ''}">
-                    <input type="file" id="fbFile${index}" style="display:none" onchange="handleFBImg(${index}, event)">
-                </div>
-                <input type="text" value="${item.adName || ''}" placeholder="广告名称" oninput="upFB(${index},'adName',this.value)">
-                <input type="text" value="${item.code}" placeholder="编码" oninput="upFB(${index},'code',this.value)">
-                <input type="number" value="${item.heart}" oninput="upFB(${index},'heart',this.value)">
-                <input type="number" value="${item.comm}" oninput="upFB(${index},'comm',this.value)">
-                <input type="number" value="${item.like}" oninput="upFB(${index},'like',this.value)">
-                <button class="btn-ghost" onclick="delFB(${index})"><i class="fa-solid fa-trash"></i></button>
-            `;
-            container.appendChild(div);
-        });
+    // --- 时钟 & 汇率 (修复时间格式 bug) ---
+    function startClocks() {
+        const update = () => {
+            [{id:'bj',z:'Asia/Shanghai'},{id:'la',z:'America/Los_Angeles'},{id:'uk',z:'Europe/London'},{id:'cz',z:'Europe/Prague'},{id:'au',z:'Australia/Sydney'}].forEach(z => {
+                // 使用 Intl.DateTimeFormat 确保格式永远都是 00:00:00，防止被 slice 截断
+                const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: z.z, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                document.getElementById(`time-${z.id}`).innerText = formatter.format(new Date());
+            });
+        }; update(); setInterval(update, 1000);
     }
-    function addFBRow() { let l=JSON.parse(localStorage.getItem('fb_ads_v52')||'[]'); l.push({img:'', adName:'', code:'', heart:0, comm:0, like:0}); localStorage.setItem('fb_ads_v52',JSON.stringify(l)); loadFBTable(); }
-    function upFB(i,f,v) { let l=JSON.parse(localStorage.getItem('fb_ads_v52')); l[i][f]=v; localStorage.setItem('fb_ads_v52',JSON.stringify(l)); }
-    function delFB(i) { let l=JSON.parse(localStorage.getItem('fb_ads_v52')); l.splice(i,1); localStorage.setItem('fb_ads_v52',JSON.stringify(l)); loadFBTable(); }
-    function handleFBImg(i,ev) { const f=ev.target.files[0]; const r=new FileReader(); r.onload=e=>{upFB(i,'img',e.target.result);loadFBTable()}; r.readAsDataURL(f); }
+    async function fetchRate() { try { const r = await fetch('https://open.er-api.com/v6/latest/USD'); const d = await r.json(); if(d?.rates?.CNY) { globalRate = d.rates.CNY; document.getElementById('rateLabel').innerText = globalRate.toFixed(4); runCalc(); } } catch(e){} }
 
-    // --- 任务逻辑 ---
-    function checkDailyReset() {
-        const today = new Date().toLocaleDateString();
-        if (localStorage.getItem('last_reset') !== today) {
-            let l = JSON.parse(localStorage.getItem('work_daily')||'[]');
-            l.forEach(i => i.done = false);
-            localStorage.setItem('work_daily', JSON.stringify(l));
-            localStorage.setItem('last_reset', today);
-        }
-    }
+    // --- 任务模块 (重写为 input 修复焦点丢失) ---
+    function checkDailyReset() { const t = new Date().toLocaleDateString(); if(localStorage.getItem('lr_v53') !== t) { let l = JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); localStorage.setItem('lr_v53', t); } }
+    
     function loadWorkTasks() {
-        ['todo', 'schedule', 'daily'].forEach(type => {
-            const list = JSON.parse(localStorage.getItem(`work_${type}`) || '[]');
-            const el = document.getElementById(`${type}List`);
-            el.innerHTML = '';
-            list.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = `task-item ${item.done ? 'done' : ''}`;
-                div.innerHTML = `<input type="checkbox" ${item.done ? 'checked' : ''} onchange="togTask('${type}',${index})"><span contenteditable="true" onblur="editTask('${type}',${index},this)">${item.text}</span><i class="fa-solid fa-xmark" style="margin-left:auto;cursor:pointer;opacity:0.3" onclick="delTask('${type}',${index})"></i>`;
-                el.appendChild(div);
+        ['todo','schedule','daily'].forEach(t => {
+            const l = JSON.parse(localStorage.getItem(`work_${t}`)||'[]');
+            const el = document.getElementById(`${t}List`); el.innerHTML = '';
+            l.forEach((i, x) => {
+                const d = document.createElement('div'); d.className = `task-item fade-in ${i.done?'done':''}`; d.setAttribute('draggable','true');
+                // 核心修复：把 contenteditable 换成原生的 input，杜绝 bug
+                d.innerHTML = `
+                    <input type="checkbox" ${i.done?'checked':''} onchange="togTask('${t}',${x})">
+                    <input type="text" class="task-input" value="${i.text}" onchange="editTask('${t}',${x},this)" placeholder="输入内容...">
+                    <button class="btn-icon" onclick="delTask('${t}',${x})"><i class="fa-solid fa-times"></i></button>
+                `;
+                el.appendChild(d);
             });
         });
     }
-    function addTask(t) { let l=JSON.parse(localStorage.getItem(`work_${t}`)||'[]'); l.push({text:'新事项',done:false}); localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
+    function addTask(t) { let l=JSON.parse(localStorage.getItem(`work_${t}`)||'[]'); l.push({text:'',done:false}); localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
     function togTask(t,i) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l[i].done=!l[i].done; localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
-    function editTask(t,i,el) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l[i].text=el.innerText; localStorage.setItem(`work_${t}`,JSON.stringify(l)); }
+    function editTask(t,i,el) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l[i].text=el.value; localStorage.setItem(`work_${t}`,JSON.stringify(l)); }
     function delTask(t,i) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l.splice(i,1); localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
+    function manualResetDaily() { let l=JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); loadWorkTasks(); showToast("日常打卡已重置"); }
+    function saveTasks(id) { const t=id.replace('List',''); const i=Array.from(document.getElementById(id).children).map(d=>({text:d.querySelector('.task-input').value,done:d.querySelector('input[type="checkbox"]').checked})); localStorage.setItem(`work_${t}`,JSON.stringify(i)); }
 
-    // --- 售后 & 通用 ---
-    function saveCurrentProduct() {
-        const n = document.getElementById('itemName').value.trim();
-        if(!n) return showToast("请输入商品名");
-        const d = { off: document.getElementById('offPrice').value, my: document.getElementById('myPrice').value, cost: document.getElementById('costCNY').value, ship: document.getElementById('shipCNY').value };
-        localStorage.setItem('p_v51_' + n, JSON.stringify(d));
-        let l = JSON.parse(localStorage.getItem('p_v51_list') || '[]');
-        if(!l.includes(n)) { l.unshift(n); localStorage.setItem('p_v51_list', JSON.stringify(l)); }
-        loadHistory(); showToast("已存档");
-    }
-    function loadHistory() {
-        const c = document.getElementById('tagCloud');
-        const l = JSON.parse(localStorage.getItem('p_v51_list') || '[]');
-        c.innerHTML = l.length ? '' : '<span style="font-size:12px;color:#ccc">暂无存档</span>';
-        l.forEach(n => {
-            const t = document.createElement('div'); t.className = 'tag'; t.innerHTML = `<span>${n}</span><i class="fa-solid fa-xmark" onclick="delHist('${n}',event)" style="font-size:10px;opacity:0.5"></i>`;
-            t.onclick = () => {
-                const d = JSON.parse(localStorage.getItem('p_v51_' + n));
-                if(d) { document.getElementById('itemName').value=n; document.getElementById('offPrice').value=d.off; document.getElementById('myPrice').value=d.my; document.getElementById('costCNY').value=d.cost; document.getElementById('shipCNY').value=d.ship; calculate(); }
-            }; c.appendChild(t);
-        });
-    }
-    function delHist(n,e) { e.stopPropagation(); let l = JSON.parse(localStorage.getItem('p_v51_list')).filter(i => i !== n); localStorage.setItem('p_v51_list', JSON.stringify(l)); localStorage.removeItem('p_v51_' + n); loadHistory(); }
-    
-    function addIssueRow() {
-        let d = JSON.parse(localStorage.getItem('issue_db_v4')||'[]');
-        d.unshift({ date: new Date().toISOString().split('T')[0], order: '', issue: '', process: '', status: 'pending' });
-        localStorage.setItem('issue_db_v4', JSON.stringify(d)); loadIssues();
-    }
+    // --- 售后模块 ---
     function loadIssues() {
-        let d = JSON.parse(localStorage.getItem('issue_db_v4')||'[]');
+        let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]');
         const sort = document.getElementById('issueSort').value;
-        d.sort((a,b) => sort==='days-desc' ? new Date(a.date)-new Date(b.date) : new Date(b.date)-new Date(a.date));
+        d.sort((a,b) => sort === 'date-desc' ? new Date(b.date)-new Date(a.date) : (getDaysElapsed(b.date)-getDaysElapsed(a.date)));
         const body = document.getElementById('issueBody'); body.innerHTML='';
         d.forEach(i => {
-            const tr = document.createElement('tr');
+            const tr = document.createElement('tr'); tr.className='issue-row fade-in'; tr.setAttribute('draggable','true');
             const days = getDaysElapsed(i.date);
-            tr.innerHTML = `
-                <td style="padding-left:20px"><input type="date" value="${i.date}" onchange="persistIssues()"></td>
-                <td style="text-align:center;font-weight:bold;color:${days>3?'var(--danger)':'var(--warning)'}">${days}天</td>
-                <td><input type="text" value="${i.order}" placeholder="订单号" oninput="persistIssues()"></td>
-                <td><textarea class="textarea-pro" oninput="persistIssues()">${i.issue}</textarea></td>
-                <td><textarea class="textarea-pro" oninput="persistIssues()">${i.process}</textarea></td>
-                <td><select onchange="persistIssues()"><option value="pending" ${i.status==='pending'?'selected':''}>处理中</option><option value="solved" ${i.status==='solved'?'selected':''}>已结案</option></select></td>
-                <td style="text-align:center"><button class="btn-ghost" onclick="this.closest('tr').remove();persistIssues()"><i class="fa-solid fa-trash"></i></button></td>
-            `;
+            tr.innerHTML = `<td style="padding-left:20px"><input type="date" value="${i.date}" onchange="persistIssues()"></td><td style="text-align:center;"><span class="status-tag" style="background:${days>3?'#fee2e2':'#fef3c7'}; color:${days>3?'#991b1b':'#b45309'}">${days}天</span></td><td><input type="text" value="${i.order}" placeholder="Order#" oninput="persistIssues()"></td><td><textarea class="textarea-pro" placeholder="详情" oninput="persistIssues()">${i.issue}</textarea></td><td><textarea class="textarea-pro" placeholder="进度" oninput="persistIssues()">${i.process}</textarea></td><td><select onchange="persistIssues(); this.closest('tr').style.opacity=this.value==='solved'?'0.5':'1'"><option value="pending" ${i.status==='pending'?'selected':''}>⏳ 处理中</option><option value="solved" ${i.status==='solved'?'selected':''}>✅ 完结</option></select></td><td style="text-align:center"><button class="btn-icon" onclick="this.closest('tr').remove();persistIssues()"><i class="fa-solid fa-trash"></i></button></td>`;
+            if(i.status==='solved') tr.style.opacity='0.5';
             body.appendChild(tr);
         });
     }
-    function persistIssues() {
-        const rows = Array.from(document.querySelectorAll('#issueBody tr')).map(r => ({
-            date: r.querySelector('input[type="date"]').value, order: r.querySelector('input[type="text"]').value,
-            issue: r.querySelectorAll('textarea')[0].value, process: r.querySelectorAll('textarea')[1].value, status: r.querySelector('select').value
-        }));
-        localStorage.setItem('issue_db_v4', JSON.stringify(rows));
-    }
+    function addIssueRow() { let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]'); d.unshift({ date: new Date().toISOString().split('T')[0], order: '', issue: '', process: '', status: 'pending' }); localStorage.setItem('issue_db_v53', JSON.stringify(d)); loadIssues(); }
+    function persistIssues() { const r = Array.from(document.querySelectorAll('#issueBody tr')).map(row => ({ date: row.querySelector('input[type="date"]').value, order: r.querySelector('input[type="text"]').value, issue: r.querySelectorAll('textarea')[0].value, process: r.querySelectorAll('textarea')[1].value, status: r.querySelector('select').value })); localStorage.setItem('issue_db_v53', JSON.stringify(r)); }
     function filterIssues() { const k = document.getElementById('issueSearch').value.toLowerCase(); document.querySelectorAll('#issueBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(k) ? '' : 'none'); }
-    function getDaysElapsed(d) { const s=new Date(d), n=new Date(); return Math.floor((Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()) - Date.UTC(s.getFullYear(), s.getMonth(), s.getDate()))/(1000*60*60*24)); }
+    function getDaysElapsed(d) { const s=new Date(d||new Date()), n=new Date(); return Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(s.getFullYear(),s.getMonth(),s.getDate()))/(86400000)); }
 
-    function resetAnalysisInputs() { ['itemName','offPrice','myPrice','costCNY','shipCNY'].forEach(i=>document.getElementById(i).value=''); calculate(); }
-    function importData(ev) { const f=ev.target.files[0]; const r=new FileReader(); r.onload=e=>{ const d=JSON.parse(e.target.result); Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload(); }; r.readAsText(f); }
-    function clearEverything() { if(confirm("确定清空？")) { localStorage.clear(); location.reload(); } }
-    function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; setTimeout(()=>t.style.display='none',2000); }
+    // --- SKU 物流雷达 ---
+    function loadSKULogix() {
+        const list = JSON.parse(localStorage.getItem('sku_radar_v53') || '[]');
+        const c = document.getElementById('skuBody'); c.innerHTML = '';
+        list.forEach((item, index) => {
+            const arrDate = new Date(new Date(item.shipDate).getTime() + item.duration * 86400000);
+            const isLate = new Date().setHours(0,0,0,0) > arrDate.getTime();
+            let st = '<span class="status-tag status-wait">待填写</span>';
+            if(item.name && item.shipDate) st = isLate ? '<span class="status-tag status-late">⚠ 已逾期</span>' : '<span class="status-tag status-ok">🟢 运输中</span>';
+            const tr = document.createElement('tr'); tr.className='fade-in';
+            tr.innerHTML = `<td style="padding-left:20px"><input type="text" value="${item.name}" oninput="upSKU(${index},'name',this.value)"></td><td><input type="date" value="${item.shipDate}" onchange="upSKU(${index},'shipDate',this.value)"></td><td><input type="number" value="${item.duration}" oninput="upSKU(${index},'duration',this.value)"></td><td style="font-weight:700">${item.shipDate?arrDate.toLocaleDateString():'--'}</td><td>${st}</td><td><button class="btn-icon" onclick="delSKU(${index})"><i class="fa-solid fa-trash"></i></button></td>`;
+            c.appendChild(tr);
+        });
+    }
+    function addSKULogix() { let l=JSON.parse(localStorage.getItem('sku_radar_v53')||'[]'); l.push({name:'',shipDate:'',duration:15}); localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
+    function upSKU(i,f,v) { let l=JSON.parse(localStorage.getItem('sku_radar_v53')); l[i][f]=v; localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
+    function delSKU(i) { let l=JSON.parse(localStorage.getItem('sku_radar_v53')); l.splice(i,1); localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
+
+    // --- FB 广告监控 ---
+    function loadFBTable() {
+        const l = JSON.parse(localStorage.getItem('fb_ads_v53') || '[]');
+        const c = document.getElementById('fbContainer'); c.innerHTML = '';
+        l.forEach((item, i) => {
+            const d = document.createElement('div'); d.className = 'fb-row fade-in'; d.setAttribute('draggable','true');
+            d.innerHTML = `<div class="fb-img-box" onclick="document.getElementById('fbFile${i}').click()"><img src="${item.img||''}"><input type="file" id="fbFile${i}" hidden accept="image/*" onchange="handleFBImg(${i},event)"></div><input type="text" value="${item.adName||''}" placeholder="广告名" oninput="upFB(${i},'adName',this.value)"><input type="text" value="${item.code||''}" placeholder="编码" oninput="upFB(${i},'code',this.value)"><input type="number" value="${item.heart||0}" oninput="upFB(${i},'heart',this.value)"><input type="number" value="${item.comm||0}" oninput="upFB(${i},'comm',this.value)"><input type="number" value="${item.like||0}" oninput="upFB(${i},'like',this.value)"><button class="btn-icon" onclick="delFB(${i})"><i class="fa-solid fa-trash"></i></button>`;
+            c.appendChild(d);
+        });
+    }
+    function addFBRow() { let l=JSON.parse(localStorage.getItem('fb_ads_v53')||'[]'); l.push({img:'',adName:'',code:'',heart:0,comm:0,like:0}); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
+    function upFB(i,f,v) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l[i][f]=v; localStorage.setItem('fb_ads_v53',JSON.stringify(l)); }
+    function delFB(i) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l.splice(i,1); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
+    function handleFBImg(i,ev) { 
+        const f=ev.target.files[0]; 
+        if(f.size > 2*1024*1024) return showToast("图片过大(>2MB)，请压缩后上传保护系统性能");
+        const r=new FileReader(); 
+        r.onload=e=>{upFB(i,'img',e.target.result);loadFBTable()}; 
+        r.readAsDataURL(f); 
+    }
+    function saveFB() { const rows = Array.from(document.getElementById('fbContainer').children); const l = rows.map((div) => ({ img: div.querySelector('img').src, adName: div.querySelectorAll('input')[1].value, code: div.querySelectorAll('input')[2].value, heart: div.querySelectorAll('input')[3].value, comm: div.querySelectorAll('input')[4].value, like: div.querySelectorAll('input')[5].value })); localStorage.setItem('fb_ads_v53', JSON.stringify(l)); }
+
+    // --- 系统通用 ---
+    function clearEverything() { if(confirm("【最高警告】确认格式化系统？\n所有任务、售后、利润、广告数据将被永久清除！\n建议操作前先导出备份！")) { localStorage.clear(); location.reload(); } }
+    let toastTimeout;
+    function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; clearTimeout(toastTimeout); toastTimeout = setTimeout(()=>t.style.display='none',3000); }
 </script>
 </body>
 </html>
