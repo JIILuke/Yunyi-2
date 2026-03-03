@@ -1,2865 +1,603 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>跨境供应链控制台 — Pro</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<style>
-/* ====================================================================
-   设计系统 — Apple / iOS 专业版（纯净背景）
-   ==================================================================== */
-:root {
-  /* 品牌色 */
-  --apple-blue:     #0071e3;
-  --apple-blue-d:   #0058b3;
-  --apple-green:    #34c759;
-  --apple-green-d:  #248a3d;
-  --apple-red:      #ff3b30;
-  --apple-orange:   #ff9f0a;
-  --apple-purple:   #bf5af2;
-  --apple-teal:     #30b0c7;
-
-  /* 灰阶（Apple 规范） */
-  --gray1: #1c1c1e;
-  --gray2: #3a3a3c;
-  --gray3: #636366;
-  --gray4: #8e8e93;
-  --gray5: #c7c7cc;
-  --gray6: #e5e5ea;
-  --gray7: #f2f2f7;
-
-  /* 背景（纯净，对标上一版本） */
-  --bg-app:    #f0f2f5;
-  --bg-panel:  #ffffff;
-
-  /* 玻璃质感 */
-  --glass-bg:     rgba(255,255,255,0.78);
-  --glass-border: rgba(255,255,255,0.35);
-  --glass-blur:   blur(24px) saturate(160%);
-  --glass-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 20px rgba(0,0,0,0.08);
-  --card-shadow:  0 1px 4px rgba(0,0,0,0.05), 0 8px 28px rgba(0,0,0,0.06), 0 24px 56px rgba(0,0,0,0.04);
-
-  /* 动效 */
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* 圆角 */
-  --r-sm: 10px;
-  --r-md: 16px;
-  --r-lg: 22px;
-  --r-xl: 28px;
-
-  /* 字体 */
-  --font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
-          'Microsoft YaHei', 'SF Pro Display', 'Helvetica Neue', sans-serif;
-
-  /* 侧边栏宽度 */
-  --sidebar-w: 220px;
-}
-
-*,*::before,*::after { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
-
-body {
-  font-family: var(--font);
-  background-color: var(--bg-app);
-  color: var(--gray1);
-  height: 100vh;
-  display: flex;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ====================================================================
-   侧边栏（修复中文文字渲染）
-   ==================================================================== */
-aside {
-  width: var(--sidebar-w);
-  flex-shrink: 0;
-  background: var(--bg-panel);
-  border-right: 1px solid var(--gray6);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 12px;
-  z-index: 20;
-  box-shadow: 2px 0 12px rgba(0,0,0,0.04);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px 28px;
-}
-.brand-icon {
-  width: 32px; height: 32px; flex-shrink: 0;
-  background: linear-gradient(145deg, var(--apple-green) 0%, var(--apple-blue) 100%);
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 0.82rem;
-  box-shadow: 0 3px 10px rgba(52,199,89,0.35);
-}
-.brand-text {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--gray1);
-  letter-spacing: 0;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.brand-ver {
-  font-size: 0.68rem;
-  color: var(--gray4);
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
-.nav-section-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--gray5);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0 10px;
-  margin-bottom: 4px;
-  margin-top: 12px;
-}
-
-.nav-menu { list-style: none; }
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  margin-bottom: 2px;
-  border-radius: var(--r-sm);
-  color: var(--gray3);
-  cursor: pointer;
-  transition: background 0.2s var(--ease), color 0.2s var(--ease);
-  font-size: 0.88rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  user-select: none;
-  line-height: 1.4;
-  position: relative;
-}
-.nav-item:hover { background: rgba(52,199,89,0.07); color: var(--apple-green-d); }
-.nav-item.active {
-  background: rgba(52,199,89,0.10);
-  color: var(--apple-green-d);
-  font-weight: 700;
-}
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 3px; height: 18px;
-  background: var(--apple-green);
-  border-radius: 0 3px 3px 0;
-}
-.nav-icon {
-  width: 22px; height: 22px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem;
-  color: inherit;
-}
-.nav-text {
-  flex: 1;
-  font-size: 0.88rem;
-  letter-spacing: 0;
-}
-.nav-badge {
-  background: var();
-  color: white;
-  font-size: 0.6rem;
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 980px;
-  min-width: 18px;
-  text-align: center;
-}
-
-/* 侧边栏底部 */
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--gray6);
-}
-.sidebar-footer-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; border-radius: var(--r-sm);
-  cursor: pointer; color: var(--gray4); font-size: 0.8rem;
-  transition: background 0.2s; letter-spacing: 0;
-}
-.sidebar-footer-item:hover { background: var(--gray7); color: var(--gray2); }
-.save-indicator {
-  font-size: 0.7rem; color: var(--apple-green-d);
-  display: none; align-items: center; gap: 4px;
-  padding: 5px 10px;
-}
-
-/* ====================================================================
-   主内容区
-   ==================================================================== */
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: var(--bg-app);
-}
-
-header {
-  position: sticky; top: 0; z-index: 10;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--gray6);
-  padding: 12px 24px;
-  display: flex; justify-content: space-between; align-items: center;
-  min-height: 56px;
-}
-
-.page-title-wrap { display: flex; flex-direction: column; gap: 1px; }
-.page-title {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--gray1);
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-.page-subtitle { font-size: 0.75rem; color: var(--gray4); letter-spacing: 0; }
-
-.header-right { display: flex; align-items: center; gap: 10px; }
-
-.header-clock-btn {
-  background: var(--gray1);
-  color: white; border: none;
-  padding: 7px 16px; border-radius: 980px;
-  font-family: var(--font); font-weight: 600; font-size: 0.78rem;
-  cursor: pointer; transition: all 0.25s var(--ease);
-  display: flex; align-items: center; gap: 6px;
-  letter-spacing: 0;
-}
-.header-clock-btn:hover { background: var(--gray2); transform: scale(1.02); }
-
-.header-icon-btn {
-  width: 34px; height: 34px;
-  background: var(--gray7); border: 1px solid var(--gray6);
-  border-radius: 50%; cursor: pointer; display: flex;
-  align-items: center; justify-content: center;
-  color: var(--gray3); font-size: 0.82rem;
-  transition: all 0.2s var(--ease);
-}
-.header-icon-btn:hover { background: rgba(52,199,89,0.1); color: var(--apple-green-d); border-color: rgba(52,199,89,0.3); }
-
-/* ====================================================================
-   内容区
-   ==================================================================== */
-.content-wrapper {
-  padding: 20px 24px;
-  max-width: 1800px;
-  margin: 0 auto;
-  width: 100%;
-}
-.view-section { display: none; }
-.view-section.active { display: block; animation: fadeUp 0.35s var(--ease); }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ====================================================================
-   统计卡片（Bento 布局）
-   ==================================================================== */
-.stats-bento {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.stat-tile {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-lg);
-  padding: 16px 18px;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.4s var(--ease);
-  cursor: default;
-  position: relative;
-  overflow: hidden;
-}
-.stat-tile::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--tile-accent, var(--apple-blue));
-  border-radius: 0 0 var(--r-lg) var(--r-lg);
-  transform: scaleX(0);
-  transition: transform 0.3s var(--ease);
-}
-.stat-tile:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
-.stat-tile:hover::after { transform: scaleX(1); }
-.stat-tile.green  { --tile-accent: var(--apple-green); }
-.stat-tile.blue   { --tile-accent: var(--apple-blue); }
-.stat-tile.orange { --tile-accent: var(--apple-orange); }
-.stat-tile.purple { --tile-accent: var(--apple-purple); }
-.stat-city  { font-size: 0.68rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-.stat-value { font-size: 2rem; font-weight: 800; color: var(--gray1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
-.stat-value-sm { font-size: 1.4rem; font-weight: 800; color: var(--gray1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-.stat-label { font-size: 0.72rem; color: var(--gray4); margin-top: 2px; letter-spacing: 0; }
-.stat-sub   { font-size: 0.68rem; color: var(--gray4); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-
-/* 统计概览 */
-.overview-bento {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.overview-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-md);
-  padding: 14px 16px;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.4s var(--ease);
-  cursor: default;
-}
-.overview-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
-.ov-icon { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; margin-bottom: 8px; }
-.ov-num  { font-size: 1.6rem; font-weight: 800; color: var(--gray1); letter-spacing: -0.03em; line-height: 1; }
-.ov-label { font-size: 0.75rem; color: var(--gray3); margin-top: 4px; letter-spacing: 0; font-weight: 500; }
-.ov-sub { font-size: 0.68rem; color: var(--gray4); margin-top: 3px; }
-
-/* ====================================================================
-   工具栏 & 筛选
-   ==================================================================== */
-.toolbar-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-md);
-  padding: 14px 18px;
-  margin-bottom: 14px;
-  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-  box-shadow: var(--glass-shadow);
-}
-.toolbar-group { display: flex; flex-direction: column; gap: 3px; }
-.toolbar-group-label { font-size: 0.65rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.05em; text-transform: uppercase; }
-
-.sf-input {
-  padding: 8px 12px;
-  background: var(--gray7);
-  border: 1.5px solid transparent;
-  border-radius: 9px;
-  font-family: var(--font); font-size: 0.85rem; color: var(--gray1);
-  transition: all 0.2s var(--ease);
-  letter-spacing: 0;
-}
-.sf-input:focus {
-  background: var(--bg-panel);
-  border-color: var(--apple-blue);
-  box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
-}
-.sf-input::placeholder { color: var(--gray4); }
-
-.sf-select-mini {
-  padding: 7px 10px;
-  background: var(--gray7);
-  border: 1.5px solid transparent;
-  border-radius: 9px;
-  font-family: var(--font); font-size: 0.82rem; color: var(--gray1);
-  cursor: pointer; transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.sf-select-mini:focus { border-color: var(--apple-blue); background: var(--bg-panel); }
-
-/* ====================================================================
-   按钮系统
-   ==================================================================== */
-.btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 18px; border-radius: 980px;
-  font-family: var(--font); font-size: 0.82rem; font-weight: 600;
-  border: none; cursor: pointer;
-  transition: all 0.25s var(--ease);
-  letter-spacing: 0; white-space: nowrap; user-select: none;
-}
-.btn:active { transform: scale(0.97); }
-.btn-sm { padding: 6px 14px; font-size: 0.78rem; }
-.btn-xs { padding: 4px 10px; font-size: 0.72rem; }
-
-.btn-primary  { background: var(--apple-blue);    color: white; box-shadow: 0 3px 10px rgba(0,113,227,0.28); }
-.btn-primary:hover  { background: var(--apple-blue-d);  box-shadow: 0 5px 16px rgba(0,113,227,0.38); transform: translateY(-1px); }
-.btn-green    { background: var(--apple-green);   color: white; box-shadow: 0 3px 10px rgba(52,199,89,0.3); }
-.btn-green:hover    { background: var(--apple-green-d); box-shadow: 0 5px 16px rgba(52,199,89,0.4); transform: translateY(-1px); }
-.btn-dark     { background: var(--gray1);          color: white; box-shadow: 0 3px 10px rgba(0,0,0,0.18); }
-.btn-dark:hover     { background: var(--gray2); transform: translateY(-1px); }
-.btn-ghost    { background: transparent; color: var(--gray3); border: 1.5px solid var(--gray6); }
-.btn-ghost:hover    { background: var(--gray7); color: var(--gray1); }
-.btn-danger   { background: transparent; color: var(--apple-red); border: 1.5px solid rgba(255,59,48,0.25); }
-.btn-danger:hover   { background: rgba(255,59,48,0.06); }
-.btn-orange   { background: var(--apple-orange);   color: white; box-shadow: 0 3px 10px rgba(255,159,10,0.28); }
-.btn-orange:hover   { background: #e68e00; transform: translateY(-1px); }
-
-/* ====================================================================
-   表格
-   ==================================================================== */
-.table-wrap {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-xl);
-  box-shadow: var(--glass-shadow);
-  overflow: hidden;
-}
-table { width: 100%; border-collapse: collapse; }
-th {
-  background: var(--gray7);
-  padding: 11px 14px;
-  text-align: left;
-  color: var(--gray4); font-size: 0.68rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  border-bottom: 1px solid var(--gray6);
-  white-space: nowrap;
-}
-td { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); vertical-align: top; }
-tr[data-row="product"]:last-child td { border-bottom: none; }
-tr[data-row="product"] { transition: background 0.2s; }
-tr[data-row="product"]:hover td { background: rgba(52,199,89,0.025); }
-tr[data-row="product"].starred td { background: rgba(255,159,10,0.03); }
-tr[data-row="product"].starred { border-left: 3px solid var(--apple-orange); }
-
-.ghost-input {
-  width: 100%; background: transparent;
-  border: 1.5px solid transparent;
-  padding: 4px 7px; border-radius: 7px;
-  font-family: var(--font); font-size: 0.85rem; color: var(--gray1);
-  transition: all 0.2s var(--ease); display: block; letter-spacing: 0;
-}
-.ghost-input:hover, .ghost-input:focus { background: var(--bg-panel); border-color: rgba(0,113,227,0.3); }
-.ghost-sku  { font-weight: 800; font-size: 0.9rem; color: var(--gray1); }
-.ghost-id   { font-size: 0.75rem; color: var(--gray4); }
-
-/* 图片上传 */
-.img-uploader {
-  width: 64px; height: 64px; border-radius: 12px;
-  background: var(--gray7); border: 1.5px dashed var(--gray5);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; overflow: hidden; position: relative;
-  transition: all 0.25s var(--ease);
-}
-.img-uploader:hover { border-color: var(--apple-green); background: rgba(52,199,89,0.06); transform: scale(1.04); }
-.img-uploader.paste-ready { border-color: var(--apple-green); background: rgba(52,199,89,0.1); box-shadow: 0 0 0 3px rgba(52,199,89,0.15); }
-.img-uploader img { width: 100%; height: 100%; object-fit: cover; display: none; }
-.img-hint { font-size: 0.62rem; color: var(--gray4); display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; line-height: 1.3; }
-
-/* 计划网格 */
-.plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
-.plan-item { display: flex; flex-direction: column; gap: 2px; }
-.plan-label { font-size: 0.62rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.04em; text-transform: uppercase; }
-.span-2 { grid-column: span 2; }
-
-.sf-text-input {
-  width: 100%; padding: 5px 8px;
-  background: var(--gray7); border: 1.5px solid transparent;
-  border-radius: 7px; font-family: var(--font); font-size: 0.78rem; color: var(--gray1);
-  transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.sf-text-input:focus { background: var(--bg-panel); border-color: var(--apple-blue); }
-.sf-text-input::placeholder { color: var(--gray5); }
-
-.sf-select {
-  width: 100%; padding: 6px 8px;
-  border-radius: 7px; font-family: var(--font); font-size: 0.8rem;
-  border: 1.5px solid var(--gray6); background: var(--bg-panel); color: var(--gray1);
-  cursor: pointer; transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.sf-select:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0,113,227,0.1); }
-
-/* 颜色状态 */
-.sel-ok    { border-color: rgba(52,199,89,0.5)   !important; color: #248a3d !important; background: rgba(52,199,89,0.08)   !important; }
-.sel-warn  { border-color: rgba(255,59,48,0.4)   !important; color: #c0392b !important; background: rgba(255,59,48,0.07)  !important; }
-.sel-muted { border-color: rgba(142,142,147,0.35) !important; color: #636366 !important; background: rgba(142,142,147,0.07)!important; }
-.sel-blue  { border-color: rgba(191,90,242,0.4)  !important; color: #8c44c5 !important; background: rgba(191,90,242,0.07) !important; }
-
-.remark-area {
-  width: 100%; height: 58px;
-  border: 1.5px solid transparent; border-radius: 7px;
-  padding: 5px 8px; font-size: 0.8rem; resize: none;
-  background: var(--gray7); font-family: var(--font); color: var(--gray1);
-  transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.remark-area:focus { background: var(--bg-panel); border-color: var(--apple-blue); }
-.remark-area::placeholder { color: var(--gray5); }
-
-.btn-row-del {
-  background: transparent; color: var(--apple-red);
-  border: 1.5px solid rgba(255,59,48,0.2);
-  width: 28px; height: 28px; border-radius: 7px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s var(--ease); font-size: 0.72rem;
-}
-.btn-row-del:hover { background: rgba(255,59,48,0.07); transform: scale(1.08); }
-
-.btn-row-star {
-  background: transparent; color: var(--apple-orange);
-  border: 1.5px solid rgba(255,159,10,0.2);
-  width: 28px; height: 28px; border-radius: 7px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s var(--ease); font-size: 0.72rem;
-}
-.btn-row-star:hover  { background: rgba(255,159,10,0.07); }
-.btn-row-star.active { background: rgba(255,159,10,0.12); color: #c17700; border-color: rgba(255,159,10,0.4); }
-
-/* ====================================================================
-   营销日历
-   ==================================================================== */
-.calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
-.cal-month {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-lg);
-  box-shadow: var(--glass-shadow);
-  padding: 18px;
-  transition: all 0.4s var(--ease);
-}
-.cal-month:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
-.cal-month.cal-active { border-color: rgba(52,199,89,0.35); background: rgba(52,199,89,0.03); }
-.cal-month h3 { font-size: 0.95rem; font-weight: 800; color: var(--gray1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--gray6); letter-spacing: 0; }
-.cal-month ul { list-style: none; }
-.cal-month li { padding: 4px 0; font-size: 0.82rem; color: var(--gray3); display: flex; align-items: center; gap: 7px; letter-spacing: 0; }
-.cal-month li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--gray5); flex-shrink: 0; }
-.cal-month.cal-active li::before { background: var(--apple-green); }
-.badge-now { font-size: 0.62rem; background: var(--apple-green); color: white; padding: 2px 8px; border-radius: 980px; font-weight: 700; }
-
-/* ====================================================================
-   发货计划
-   ==================================================================== */
-.ship-search-bar {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-md);
-  padding: 14px 18px;
-  margin-bottom: 14px;
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-  box-shadow: var(--glass-shadow);
-}
-.ship-result-info { font-size: 0.75rem; color: var(--gray4); margin-left: 4px; letter-spacing: 0; }
-
-.shipment-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-xl);
-  box-shadow: var(--glass-shadow);
-  margin-bottom: 14px;
-  transition: all 0.4s var(--ease);
-  overflow: hidden;
-}
-.shipment-card:hover { border-color: rgba(52,199,89,0.3); box-shadow: var(--card-shadow); }
-.shipment-card.collapsed .card-body { display: none; }
-.card-body { padding: 0 20px 18px; }
-
-.shipment-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--gray7);
-  transition: background 0.2s;
-}
-.shipment-header:hover { background: rgba(52,199,89,0.02); }
-
-.sku-info { display: flex; align-items: center; gap: 10px; }
-.sku-name { font-weight: 800; font-size: 1rem; color: var(--gray1); letter-spacing: 0; }
-.sku-badge { background: var(--gray7); padding: 3px 10px; border-radius: 980px; font-size: 0.72rem; color: var(--gray3); font-weight: 500; }
-
-.header-controls { display: flex; align-items: center; gap: 8px; }
-.collapse-btn { background: none; border: none; cursor: pointer; color: var(--gray4); font-size: 0.8rem; padding: 4px; transition: transform 0.25s var(--ease); }
-.shipment-card.collapsed .collapse-btn { transform: rotate(-90deg); }
-
-.status-select {
-  appearance: none; padding: 6px 16px;
-  border-radius: 980px; border: none;
-  font-family: var(--font); font-weight: 700; font-size: 0.78rem;
-  cursor: pointer; transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.st-pending  { background: rgba(255,159,10,0.10); color: #b37400; border: 1.5px solid rgba(255,159,10,0.28); }
-.st-transit  { background: rgba(0,113,227,0.08);  color: var(--apple-blue); border: 1.5px solid rgba(0,113,227,0.22); }
-.st-received { background: rgba(52,199,89,0.08);  color: var(--apple-green-d); border: 1.5px solid rgba(52,199,89,0.28); }
-
-.date-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 10px; margin-bottom: 14px; }
-.date-item { display: flex; flex-direction: column; gap: 3px; }
-.date-label { font-size: 0.62rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.04em; text-transform: uppercase; }
-.sf-field {
-  padding: 7px 10px; background: var(--gray7); border: 1.5px solid transparent;
-  border-radius: 9px; font-family: var(--font); font-size: 0.82rem; color: var(--gray1);
-  width: 100%; transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.sf-field:focus { background: var(--bg-panel); border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0,113,227,0.08); }
-.sf-field::placeholder { color: var(--gray5); }
-
-.remark-box {
-  width: 100%; padding: 9px 11px; border-radius: 9px;
-  border: 1.5px solid transparent; min-height: 56px; font-size: 0.82rem; resize: vertical;
-  background: var(--gray7); font-family: var(--font); color: var(--gray1);
-  transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.remark-box:focus { background: var(--bg-panel); border-color: var(--apple-blue); }
-.remark-box::placeholder { color: var(--gray5); }
-
-/* 物流面板 */
-.logistics-panel {
-  background: rgba(52,199,89,0.03);
-  border: 1px solid rgba(52,199,89,0.12);
-  border-radius: var(--r-sm); padding: 14px; margin-top: 14px;
-}
-.logistics-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.logistics-title { font-weight: 800; font-size: 0.78rem; color: var(--apple-green-d); display: flex; align-items: center; gap: 6px; letter-spacing: 0; }
-.log-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr 34px; gap: 8px; align-items: end; padding: 8px 0; border-top: 1px dashed rgba(52,199,89,0.12); }
-.log-row:first-of-type { border-top: none; padding-top: 0; }
-.mini-label { font-size: 0.6rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
-.mini-number { padding: 7px 9px; border-radius: 9px; border: 1.5px solid var(--gray6); background: var(--bg-panel); font-family: var(--font); font-size: 0.82rem; width: 100%; transition: all 0.2s var(--ease); letter-spacing: 0; }
-.mini-number:focus { border-color: var(--apple-blue); }
-.btn-del { background: var(--bg-panel); border: 1.5px solid rgba(255,59,48,0.2); color: var(--apple-red); border-radius: 9px; cursor: pointer; height: 34px; display: flex; align-items: center; justify-content: center; transition: all 0.2s var(--ease); font-size: 0.72rem; }
-.btn-del:hover { background: rgba(255,59,48,0.06); transform: scale(1.05); }
-
-/* 供应商面板 */
-.supplier-panel { background: rgba(0,0,0,0.018); border: 1px solid var(--gray6); border-radius: var(--r-sm); padding: 14px; margin-top: 14px; }
-.supplier-panel-title { font-size: 0.68rem; font-weight: 700; color: var(--gray3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 11px; display: flex; align-items: center; gap: 6px; }
-.supplier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-/* ====================================================================
-   弹窗
-   ==================================================================== */
-.modal-mask {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(8px);
-  display: none; align-items: center; justify-content: center;
-  z-index: 999; padding: 20px;
-}
-.modal {
-  width: min(560px, 100%);
-  background: rgba(255,255,255,0.96);
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: var(--r-xl);
-  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
-  overflow: hidden;
-  animation: modalIn 0.3s var(--ease);
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.94) translateY(12px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-.modal-header { padding: 18px 20px 12px; display: flex; justify-content: space-between; align-items: center; }
-.modal-title { font-size: 1rem; font-weight: 800; color: var(--gray1); display: flex; align-items: center; gap: 8px; letter-spacing: 0; }
-.modal-close { cursor: pointer; color: var(--gray4); background: var(--gray7); border: none; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; transition: all 0.2s var(--ease); }
-.modal-close:hover { background: var(--gray6); color: var(--gray2); }
-.modal-body { padding: 0 20px 12px; max-height: 72vh; overflow-y: auto; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
-.form-item { display: flex; flex-direction: column; gap: 4px; }
-.form-label { font-size: 0.68rem; font-weight: 700; color: var(--gray3); letter-spacing: 0.03em; text-transform: uppercase; }
-.form-item input, .form-item select, .form-item textarea {
-  padding: 9px 11px; background: var(--gray7);
-  border: 1.5px solid transparent; border-radius: 9px;
-  font-family: var(--font); font-size: 0.85rem; color: var(--gray1);
-  transition: all 0.2s var(--ease); letter-spacing: 0;
-}
-.form-item input:focus, .form-item select:focus, .form-item textarea:focus { background: var(--bg-panel); border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0,113,227,0.1); }
-.form-item textarea { resize: vertical; min-height: 68px; }
-.modal-footer { padding: 12px 20px 18px; display: flex; justify-content: flex-end; gap: 8px; }
-.err-tip { display: none; color: var(--apple-red); font-size: 0.78rem; font-weight: 600; margin-top: 8px; padding: 8px 11px; background: rgba(255,59,48,0.06); border-radius: 8px; letter-spacing: 0; }
-.form-divider { font-size: 0.68rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.06em; text-transform: uppercase; grid-column: 1/-1; padding-top: 8px; border-top: 1px solid var(--gray6); margin-top: 4px; display: flex; align-items: center; gap: 8px; }
-.form-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray6); }
-
-/* ====================================================================
-   通知浮窗
-   ==================================================================== */
-.notify-dock {
-  position: fixed; bottom: 18px; right: 18px;
-  width: 310px; z-index: 1000;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--gray6);
-  border-radius: var(--r-lg);
-  box-shadow: var(--card-shadow);
-  overflow: hidden;
-  transition: all 0.3s var(--ease);
-}
-.notify-dock.minimized { height: 46px; width: 180px; overflow: hidden; }
-.notify-header {
-  background: var(--gray1); color: white; padding: 11px 14px;
-  font-weight: 700; font-size: 0.8rem; letter-spacing: 0;
-  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
-}
-.notify-body { max-height: 280px; overflow-y: auto; }
-.notify-section-title { font-size: 0.62rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 14px 4px; }
-.notify-item { padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); display: flex; gap: 9px; align-items: flex-start; transition: background 0.15s; }
-.notify-item:hover { background: var(--gray7); }
-.notify-item:last-child { border-bottom: none; }
-.ni-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.ni-dot.overdue { background: var(--apple-red); }
-.ni-dot.today   { background: var(--apple-orange); }
-.ni-dot.soon    { background: var(--apple-blue); }
-.ni-title { font-size: 0.78rem; font-weight: 700; color: var(--gray1); letter-spacing: 0; }
-.ni-desc  { font-size: 0.68rem; color: var(--gray4); margin-top: 1px; letter-spacing: 0; }
-.empty-notify { padding: 18px 14px; text-align: center; color: var(--gray4); font-size: 0.8rem; letter-spacing: 0; }
-
-/* ====================================================================
-   Apple 日期选择器
-   ==================================================================== */
-.apple-date-wrapper { position: relative; display: inline-flex; align-items: center; width: 100%; }
-.apple-date-display {
-  width: 100%; padding: 6px 26px 6px 28px;
-  background: var(--gray7); border: 1.5px solid transparent;
-  border-radius: 9px; font-family: var(--font); font-size: 0.78rem;
-  color: var(--gray1); cursor: pointer;
-  transition: all 0.18s var(--ease); font-weight: 500; user-select: none;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0;
-}
-.apple-date-display:hover { background: rgba(255,255,255,0.9); border-color: rgba(0,113,227,0.28); }
-.apple-date-display.has-value { background: rgba(52,199,89,0.07); border-color: rgba(52,199,89,0.28); color: var(--gray1); }
-.apple-date-display.empty { color: var(--gray4); }
-.apple-date-display.readonly-auto { background: rgba(142,142,147,0.07); color: var(--gray4); cursor: default; pointer-events: none; }
-.apple-date-icon  { position: absolute; left: 8px; font-size: 0.68rem; color: var(--gray4); pointer-events: none; }
-.has-value ~ .apple-date-icon,
-.apple-date-display.has-value + .apple-date-icon { color: var(--apple-green-d); }
-.apple-date-clear { position: absolute; right: 5px; background: var(--gray5); border: none; border-radius: 50%; width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 0.55rem; padding: 0; transition: 0.15s; line-height: 1; }
-.apple-date-clear:hover { background: var(--gray4); }
-
-.apple-picker-popover {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 9999;
-  background: rgba(255,255,255,0.98);
-  border-radius: var(--r-lg);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08);
-  padding: 12px; width: 244px;
-  border: 1px solid rgba(0,0,0,0.07);
-  animation: popIn 0.16s var(--ease);
-  user-select: none;
-}
-@keyframes popIn {
-  from { opacity:0; transform: translateY(-5px) scale(0.97); }
-  to   { opacity:1; transform: translateY(0) scale(1); }
-}
-.apple-picker-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.apple-picker-nav button { background: var(--gray7); border: none; border-radius: 7px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--apple-blue); font-size: 0.8rem; transition: 0.12s; }
-.apple-picker-nav button:hover { background: rgba(0,113,227,0.08); }
-.apple-picker-month-year { font-weight: 700; font-size: 0.85rem; color: var(--gray1); cursor: pointer; padding: 3px 8px; border-radius: 7px; transition: 0.12s; letter-spacing: 0; }
-.apple-picker-month-year:hover { background: var(--gray7); }
-.apple-picker-weekdays { display: grid; grid-template-columns: repeat(7,1fr); margin-bottom: 3px; }
-.apple-picker-weekdays span { text-align: center; font-size: 0.65rem; color: var(--gray4); font-weight: 700; padding: 2px 0; }
-.apple-picker-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; }
-.apple-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:0.75rem; border-radius:50%; cursor:pointer; transition:0.1s; font-weight:500; color:var(--gray1); }
-.apple-day:hover { background: var(--gray6); }
-.apple-day.today  { color: var(--apple-blue); font-weight: 800; }
-.apple-day.selected { background: var(--apple-blue); color: white !important; font-weight: 700; }
-.apple-day.other-month { color: var(--gray5); }
-.apple-ym-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; padding: 2px 0; }
-.apple-ym-cell { text-align:center; padding:6px 3px; border-radius:8px; cursor:pointer; font-size:0.78rem; font-weight:500; color:var(--gray1); transition:0.1s; letter-spacing: 0; }
-.apple-ym-cell:hover { background: var(--gray7); }
-.apple-ym-cell.current-ym { background: var(--apple-blue); color: white; font-weight: 700; }
-.apple-ym-scroll { max-height: 175px; overflow-y: auto; }
-
-/* ====================================================================
-   Toast 通知
-   ==================================================================== */
-.toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-.toast {
-  background: rgba(28,28,30,0.92);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  color: white; padding: 10px 16px; border-radius: var(--r-md);
-  font-size: 0.82rem; font-weight: 600; letter-spacing: 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  display: flex; align-items: center; gap: 8px;
-  pointer-events: auto;
-  animation: toastIn 0.25s var(--ease), toastOut 0.3s var(--ease) 2.5s forwards;
-  max-width: 320px;
-}
-@keyframes toastIn { from { opacity:0; transform: translateY(-8px) scale(0.95); } to { opacity:1; transform: translateY(0) scale(1); } }
-@keyframes toastOut { from { opacity:1; transform: translateY(0); } to { opacity:0; transform: translateY(-6px); } }
-.toast-icon { font-size: 0.88rem; }
-.toast.success .toast-icon { color: var(--apple-green); }
-.toast.error   .toast-icon { color: var(--apple-red); }
-.toast.info    .toast-icon { color: var(--apple-blue); }
-.toast.warning .toast-icon { color: var(--apple-orange); }
-
-/* ====================================================================
-   系统设置
-   ==================================================================== */
-.settings-card { background: var(--bg-panel); border: 1px solid var(--gray6); border-radius: var(--r-xl); box-shadow: var(--glass-shadow); padding: 28px; max-width: 600px; margin: 0 auto; }
-.settings-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--gray6); letter-spacing: 0; }
-.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray7); gap: 20px; }
-.settings-row:last-child { border-bottom: none; }
-.settings-label { font-size: 0.88rem; font-weight: 600; color: var(--gray1); letter-spacing: 0; }
-.settings-desc  { font-size: 0.75rem; color: var(--gray4); margin-top: 2px; letter-spacing: 0; }
-.settings-section-title { font-size: 0.72rem; font-weight: 700; color: var(--gray4); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 16px; margin-bottom: 8px; }
-
-.toggle-btn {
-  width: 44px; height: 26px; border-radius: 980px;
-  background: var(--gray5); border: none; cursor: pointer;
-  position: relative; transition: background 0.25s var(--ease);
-  flex-shrink: 0;
-}
-.toggle-btn.on { background: var(--apple-green); }
-.toggle-btn::after {
-  content: ''; position: absolute;
-  top: 3px; left: 3px;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  transition: transform 0.25s var(--ease);
-}
-.toggle-btn.on::after { transform: translateX(18px); }
-
-/* ====================================================================
-   快捷键提示覆盖
-   ==================================================================== */
-.shortcut-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(8px); z-index: 9998;
-  display: none; align-items: center; justify-content: center;
-}
-.shortcut-panel {
-  background: rgba(255,255,255,0.96); border-radius: var(--r-xl);
-  padding: 28px 32px; width: min(500px, 90vw);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.25);
-  animation: modalIn 0.3s var(--ease);
-}
-.shortcut-panel h3 { font-size: 1rem; font-weight: 800; margin-bottom: 20px; color: var(--gray1); letter-spacing: 0; }
-.shortcut-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray7); }
-.shortcut-item:last-child { border-bottom: none; }
-.shortcut-desc { font-size: 0.85rem; color: var(--gray2); letter-spacing: 0; }
-.kbd { background: var(--gray7); border: 1px solid var(--gray6); border-bottom-width: 2px; border-radius: 5px; padding: 2px 7px; font-size: 0.75rem; font-weight: 700; color: var(--gray2); font-family: var(--font); letter-spacing: 0; }
-
-/* ====================================================================
-   撤销悬浮条
-   ==================================================================== */
-.undo-bar {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: rgba(28,28,30,0.92); backdrop-filter: blur(12px);
-  color: white; padding: 11px 20px; border-radius: var(--r-md);
-  font-size: 0.82rem; font-weight: 600; letter-spacing: 0;
-  display: none; align-items: center; gap: 12px;
-  z-index: 9998; box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-  transition: all 0.3s var(--ease);
-}
-.undo-bar.show { display: flex; transform: translateX(-50%) translateY(0); }
-.undo-btn { color: var(--apple-blue); cursor: pointer; font-weight: 700; border: none; background: none; font-family: var(--font); font-size: 0.82rem; }
-.undo-btn:hover { color: #4da3f0; }
-
-/* ====================================================================
-   进度指示器
-   ==================================================================== */
-.progress-bar {
-  position: fixed; top: 0; left: 0; right: 0; height: 2.5px;
-  background: linear-gradient(90deg, var(--apple-green), var(--apple-blue));
-  z-index: 9999; transform: scaleX(0); transform-origin: left;
-  transition: transform 0.4s var(--ease);
-}
-.progress-bar.loading { transform: scaleX(0.7); }
-.progress-bar.done    { transform: scaleX(1); transition: transform 0.2s; }
-
-/* ====================================================================
-   空状态
-   ==================================================================== */
-.empty-state { text-align: center; padding: 48px 20px; color: var(--gray4); }
-.empty-state i { font-size: 2.5rem; margin-bottom: 12px; color: var(--gray5); }
-.empty-state h4 { font-size: 0.95rem; font-weight: 700; color: var(--gray3); margin-bottom: 6px; letter-spacing: 0; }
-.empty-state p  { font-size: 0.82rem; letter-spacing: 0; }
-
-/* ====================================================================
-   搜索高亮
-   ==================================================================== */
-.search-highlight { background: rgba(255,204,0,0.35); border-radius: 3px; padding: 0 1px; }
-
-/* ====================================================================
-   悬浮操作
-   ==================================================================== */
-.hover-actions { display: none; gap: 4px; }
-tr[data-row="product"]:hover .hover-actions { display: flex; }
-
-/* 滚动条美化 */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--gray5); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gray4); }
-
-</style>
-</head>
-
-<body>
-<!-- 进度条 -->
-<div class="progress-bar" id="progressBar"></div>
-
-<!-- Toast容器 -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- 撤销条 -->
-<div class="undo-bar" id="undoBar">
-  <span id="undoMsg">已删除 1 个产品</span>
-  <button class="undo-btn" onclick="undoDelete()">撤销</button>
-  <button style="background:none;border:none;color:var(--gray5);cursor:pointer;font-size:0.75rem;padding:0 4px;" onclick="clearUndo()">✕</button>
-</div>
-
-<!-- ══════════════════════════════════
-     侧边栏
-══════════════════════════════════ -->
-<aside>
-  <div class="brand">
-    <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
-    <div>
-      <div class="brand-text">供应链</div>
-      <div class="brand-ver">控制台 Pro</div>
-    </div>
-  </div>
-
-  <div class="nav-section-label">主菜单</div>
-  <ul class="nav-menu">
-    <li class="nav-item active" onclick="switchTab('dashboard',this)">
-      <span class="nav-icon"><i class="fas fa-th-large"></i></span>
-      <span class="nav-text">工作台</span>
-    </li>
-    <li class="nav-item" onclick="switchTab('marketing',this)">
-      <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
-      <span class="nav-text">营销日历</span>
-    </li>
-    <li class="nav-item" onclick="switchTab('shipments',this)">
-      <span class="nav-icon"><i class="fas fa-truck"></i></span>
-      <span class="nav-text">发货计划</span>
-      <span class="nav-badge" id="shipBadge" style="display:none;">0</span>
-    </li>
-    <li class="nav-item" onclick="switchTab('settings',this)">
-      <span class="nav-icon"><i class="fas fa-cog"></i></span>
-      <span class="nav-text">系统设置</span>
-    </li>
-  </ul>
-
-  <div class="sidebar-footer">
-    <div class="save-indicator" id="saveIndicator">
-      <i class="fas fa-check-circle"></i> 已自动保存
-    </div>
-    <div class="sidebar-footer-item" onclick="exportCSV()">
-      <i class="fas fa-download" style="width:16px;text-align:center;"></i>
-      <span>导出数据</span>
-    </div>
-    <div class="sidebar-footer-item" onclick="showShortcuts()">
-      <i class="fas fa-keyboard" style="width:16px;text-align:center;"></i>
-      <span>快捷键</span>
-    </div>
-  </div>
-</aside>
-
-<!-- ══════════════════════════════════
-     主内容区
-══════════════════════════════════ -->
-<main>
-  <header>
-    <div class="page-title-wrap">
-      <div class="page-title" id="page-header-title">供应链协同看板</div>
-      <div class="page-subtitle" id="page-header-desc">Integrated Supply Chain &amp; Marketing Console</div>
-    </div>
-    <div class="header-right">
-      <div class="header-icon-btn" onclick="checkReminders(true)" title="提醒中心">
-        <i class="fas fa-bell"></i>
-      </div>
-      <button class="header-clock-btn">
-        <i class="far fa-clock"></i>
-        <span id="top-date">加载中…</span>
-      </button>
-    </div>
-  </header>
-
-  <div class="content-wrapper">
-
-    <!-- ═══ 工作台 ═══ -->
-    <div id="view-dashboard" class="view-section active">
-
-      <!-- 时区看板 -->
-      <div class="stats-bento">
-        <div class="stat-tile green">
-          <div class="stat-city"><i class="fas fa-circle" style="color:var(--apple-green);font-size:0.45rem;"></i>北京 · CN</div>
-          <div class="stat-value" id="time-cn">--:--</div>
-        </div>
-        <div class="stat-tile blue">
-          <div class="stat-city"><i class="fas fa-circle" style="color:var(--apple-blue);font-size:0.45rem;"></i>洛杉矶 · US</div>
-          <div class="stat-value" id="time-us">--:--</div>
-        </div>
-        <div class="stat-tile orange">
-          <div class="stat-city"><i class="fas fa-circle" style="color:var(--apple-orange);font-size:0.45rem;"></i>伦敦 · UK</div>
-          <div class="stat-value" id="time-uk">--:--</div>
-        </div>
-        <div class="stat-tile purple">
-          <div class="stat-city"><i class="fas fa-circle" style="color:var(--apple-purple);font-size:0.45rem;"></i>巴黎 · EU</div>
-          <div class="stat-value" id="time-eu">--:--</div>
-        </div>
-      </div>
-
-      <!-- 业务概览 -->
-      <div class="overview-bento" style="grid-template-columns: repeat(2, 1fr);">
-        <div class="overview-card">
-          <div class="ov-icon" style="background:rgba(255,159,10,0.10);color:var(--apple-orange);"><i class="fas fa-truck"></i></div>
-          <div class="ov-num" id="ov-transit">0</div>
-          <div class="ov-label">运输中</div>
-          <div class="ov-sub" id="ov-transit-sub">发货计划</div>
-        </div>
-        <div class="overview-card">
-          <div class="ov-icon" style="background:rgba(255,59,48,0.08);color:var(--apple-red);"><i class="fas fa-triangle-exclamation"></i></div>
-          <div class="ov-num" id="ov-alert">0</div>
-          <div class="ov-label">今日提醒</div>
-          <div class="ov-sub" id="ov-alert-sub">逾期 / 今日节点</div>
-        </div>
-      </div>
-
-      <!-- 工具栏 -->
-      <div class="toolbar-card">
-        <div class="toolbar-group">
-          <span class="toolbar-group-label">产品搜索</span>
-          <input id="skuSearchInput" class="sf-input" placeholder="输入 SKU / ID / 产品名…" style="width:210px;">
-        </div>
-        <div class="toolbar-group">
-          <span class="toolbar-group-label">营销节点</span>
-          <select id="filterNode" class="sf-select-mini" onchange="applyFilters()">
-            <option value="">全部节点</option>
-            <option value="1">1月 · 新年</option>
-            <option value="2">2月 · 情人节</option>
-            <option value="3">3月 · 妇女节</option>
-            <option value="4">4月 · 复活节</option>
-            <option value="5">5月 · 母亲节</option>
-            <option value="6">6月 · 父亲节</option>
-            <option value="7">7月 · Prime Day</option>
-            <option value="8">8月 · 返校季</option>
-            <option value="9">9月 · 秋季新品</option>
-            <option value="10">10月 · 万圣节</option>
-            <option value="11">11月 · 黑五</option>
-            <option value="12">12月 · 圣诞节</option>
-          </select>
-        </div>
-        <div class="toolbar-group">
-          <span class="toolbar-group-label">借样状态</span>
-          <select id="filterSample" class="sf-select-mini" onchange="applyFilters()">
-            <option value="">全部</option>
-            <option value="yes">已借样</option>
-            <option value="no">未借样</option>
-          </select>
-        </div>
-        <div class="toolbar-group">
-          <span class="toolbar-group-label">上图状态</span>
-          <select id="filterOnImg" class="sf-select-mini" onchange="applyFilters()">
-            <option value="">全部</option>
-            <option value="yes">已上图</option>
-            <option value="no">未上图</option>
-          </select>
-        </div>
-        <div style="display:flex;gap:8px;align-items:flex-end;margin-left:4px;">
-          <button id="btnSkuSearch" class="btn btn-primary btn-sm"><i class="fas fa-magnifying-glass"></i> 搜索</button>
-          <button id="btnReset" class="btn btn-ghost btn-sm"><i class="fas fa-rotate-left"></i> 重置</button>
-        </div>
-        <div style="margin-left:auto;display:flex;gap:8px;">
-          <button id="btnOpenAddProduct" class="btn btn-green"><i class="fas fa-plus"></i> 新增产品</button>
-        </div>
-      </div>
-
-      <!-- 产品表格 -->
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th width="72">图片</th>
-              <th width="165">基础信息</th>
-              <th width="300">计划与跟进</th>
-              <th width="170">营销节点 / 借样</th>
-              <th>待跟进事项</th>
-              <th width="265">供应商 / 备选 / 备注</th>
-            </tr>
-          </thead>
-          <tbody id="productTbody">
-            <tr data-row="product" data-starred="no">
-              <td>
-                <div class="img-uploader" data-img-uploader>
-                  <img alt="preview">
-                  <div class="img-hint">
-                    <i class="fas fa-image" style="font-size:0.95rem;color:var(--gray5);"></i>
-                    <span>上传/粘贴</span>
-                  </div>
-                  <input type="file" accept="image/*" style="display:none;">
-                </div>
-              </td>
-              <td>
-                <input class="ghost-input ghost-sku sku-field" value="SKU-2024-XP01" placeholder="SKU">
-                <input class="ghost-input ghost-id id-field" value="ID: 882910" placeholder="ID码">
-                <input class="ghost-input name-field" value="户外防水运动背包" placeholder="产品名称">
-              </td>
-              <td>
-                <div class="plan-grid">
-                  <div class="plan-item">
-                    <span class="plan-label">计划下单</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display has-value" tabindex="0">2024年03月01日</div>
-                      <input type="hidden" class="apple-date-value plan-order" value="2024-03-01">
-                      <button class="apple-date-clear" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item">
-                    <span class="plan-label">首批下单</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display has-value" tabindex="0">2024年02月01日</div>
-                      <input type="hidden" class="apple-date-value plan-first-order" value="2024-02-01">
-                      <button class="apple-date-clear" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item">
-                    <span class="plan-label">样品接收</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display has-value" tabindex="0">2024年02月15日</div>
-                      <input type="hidden" class="apple-date-value plan-sample" value="2024-02-15">
-                      <button class="apple-date-clear" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item">
-                    <span class="plan-label">图片交付</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display has-value" tabindex="0">2024年02月20日</div>
-                      <input type="hidden" class="apple-date-value plan-img-delivery" value="2024-02-20">
-                      <button class="apple-date-clear" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item">
-                    <span class="plan-label">工厂交货</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display has-value" tabindex="0">2024年03月10日</div>
-                      <input type="hidden" class="apple-date-value plan-factory" value="2024-03-10">
-                      <button class="apple-date-clear" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item">
-                    <span class="plan-label">FBA到货</span>
-                    <div class="apple-date-wrapper" data-apple-date>
-                      <i class="fas fa-calendar-day apple-date-icon"></i>
-                      <div class="apple-date-display empty" tabindex="0">选择日期</div>
-                      <input type="hidden" class="apple-date-value plan-arrival" value="">
-                      <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-                    </div>
-                  </div>
-                  <div class="plan-item span-2">
-                    <span class="plan-label">Listing 状态/链接</span>
-                    <input class="sf-text-input plan-listing" placeholder="如：已上架">
-                  </div>
-                  <div class="plan-item span-2">
-                    <span class="plan-label">Amazon 发货单号</span>
-                    <input class="sf-text-input plan-amz-text" placeholder="如：FBA17XXXXXXXX">
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;flex-direction:column;gap:7px;">
-                  <select class="sf-select solar-select">
-                    <option value="">选择营销节点…</option>
-                    <option value="1">1月（新年/清仓）</option>
-                    <option value="2">2月（情人节/春季）</option>
-                    <option value="3" selected>3月（妇女节）</option>
-                    <option value="4">4月（复活节）</option>
-                    <option value="5">5月（母亲节）</option>
-                    <option value="6">6月（父亲节）</option>
-                    <option value="7">7月（Prime Day）</option>
-                    <option value="8">8月（返校季）</option>
-                    <option value="9">9月（秋季新品）</option>
-                    <option value="10">10月（万圣节/Q4）</option>
-                    <option value="11">11月（黑五/网一）</option>
-                    <option value="12">12月（圣诞节）</option>
-                  </select>
-                  <select class="sf-select sample-select" data-color-mode="sample">
-                    <option value="yes" selected>✔ 已借样拍摄</option>
-                    <option value="no">✘ 未借样</option>
-                  </select>
-                  <select class="sf-select onimg-select" data-color-mode="onimg">
-                    <option value="no" selected>✘ 未上图</option>
-                    <option value="yes">✔ 已上图</option>
-                  </select>
-                </div>
-              </td>
-              <td>
-                <textarea class="remark-area" placeholder="输入待跟进内容…">确认五点描述翻译；检查外包装标签…</textarea>
-              </td>
-              <td>
-                <div style="display:flex;flex-direction:column;gap:7px;">
-                  <input class="sf-text-input supplier-field" placeholder="主供应商（工厂/渠道）">
-                  <input class="sf-text-input alt-supplier-field" placeholder="备选供应商（工厂/渠道）">
-                  <textarea class="remark-area note-field" placeholder="备注（账期/起订量等）" style="height:44px;"></textarea>
-                  <div style="display:flex;justify-content:flex-end;gap:5px;">
-                    <button class="btn-row-star" onclick="toggleStarRow(this)" title="标记重要"><i class="fas fa-star"></i></button>
-                    <button class="btn-row-del" onclick="deleteProductRow(this)" title="删除此产品"><i class="fas fa-trash"></i></button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div><!-- /view-dashboard -->
-
-    <!-- ═══ 营销日历 ═══ -->
-    <div id="view-marketing" class="view-section">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:14px;">
-        <div class="toolbar-card" style="margin-bottom:0;padding:10px 14px;gap:10px;">
-          <span style="font-size:0.82rem;color:var(--gray3);font-weight:600;">日历语言</span>
-          <select onchange="changeLang(this.value)" class="sf-select-mini">
-            <option value="cn" selected>中文</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-      </div>
-      <div class="calendar-grid" id="calendarGrid"></div>
-    </div>
-
-    <!-- ═══ 发货计划 ═══ -->
-    <div id="view-shipments" class="view-section">
-      <div class="ship-search-bar">
-        <i class="fas fa-magnifying-glass" style="color:var(--gray4);font-size:0.82rem;"></i>
-        <input id="shipSearchInput" class="sf-input" style="flex:1;min-width:180px;"
-          placeholder="搜索 SKU / ID / 备注 / 供应商…"
-          oninput="applyShipSearch()">
-        <select id="shipFilterStatus" class="sf-select-mini" onchange="applyShipSearch()">
-          <option value="">全部状态</option>
-          <option value="pending">待发货</option>
-          <option value="transit">运输中</option>
-          <option value="received">已签收</option>
-        </select>
-        <button onclick="applyShipSearch()" class="btn btn-primary btn-sm"><i class="fas fa-magnifying-glass"></i> 搜索</button>
-        <button onclick="resetShipSearch()" class="btn btn-ghost btn-sm"><i class="fas fa-rotate-left"></i> 重置</button>
-        <span class="ship-result-info" id="shipSearchCount"></span>
-        <div style="margin-left:auto;display:flex;gap:8px;">
-          <button class="btn btn-ghost btn-sm" onclick="toggleAllCards(true)"><i class="fas fa-compress"></i> 全部折叠</button>
-          <button class="btn btn-ghost btn-sm" onclick="toggleAllCards(false)"><i class="fas fa-expand"></i> 全部展开</button>
-        </div>
-      </div>
-      <div id="shipmentsContainer"></div>
-    </div>
-
-    <!-- ═══ 系统设置 ═══ -->
-    <div id="view-settings" class="view-section">
-      <div class="settings-card">
-        <h3><i class="fas fa-cog" style="margin-right:8px;color:var(--gray3);"></i>系统设置</h3>
-
-        <div class="settings-section-title">显示与语言</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">营销日历语言</div>
-            <div class="settings-desc">切换营销日历的活动描述语言</div>
-          </div>
-          <select onchange="changeLang(this.value)" id="langSelect" class="sf-select-mini" style="width:120px;">
-            <option value="cn" selected>中文</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-
-        <div class="settings-section-title">数据与存储</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">自动保存</div>
-            <div class="settings-desc">每 5 秒自动将数据保存到本地浏览器</div>
-          </div>
-          <button class="toggle-btn on" id="toggleAutoSave" onclick="toggleAutoSave(this)"></button>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">导出产品数据</div>
-            <div class="settings-desc">将全部产品信息导出为 CSV 文件</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> 导出 CSV</button>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">清空所有数据</div>
-            <div class="settings-desc">删除本地缓存的全部产品与发货数据</div>
-          </div>
-          <button class="btn btn-danger btn-sm" onclick="clearAllData()"><i class="fas fa-trash"></i> 清空数据</button>
-        </div>
-
-        <div class="settings-section-title">提醒设置</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">提前预警天数</div>
-            <div class="settings-desc">在节点到期前多少天开始预警提示</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <input type="number" id="warnDays" value="7" min="1" max="30"
-              style="width:64px;padding:7px 10px;border-radius:9px;border:1.5px solid var(--gray6);font-family:var(--font);font-size:0.85rem;text-align:center;"
-              onchange="saveSettings()">
-            <span style="font-size:0.82rem;color:var(--gray3);">天</span>
-          </div>
-        </div>
-
-        <div class="settings-section-title">关于</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">版本</div>
-          </div>
-          <span style="font-size:0.82rem;color:var(--gray4);letter-spacing:0;">V 4.0 Pro</span>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">快捷键</div>
-            <div class="settings-desc">查看所有键盘快捷键</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="showShortcuts()"><i class="fas fa-keyboard"></i> 查看</button>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content-wrapper -->
-</main>
-
-<!-- ══════════════════════════════════
-     提醒浮窗
-══════════════════════════════════ -->
-<div id="notification-dock" class="notify-dock">
-  <div class="notify-header" onclick="toggleNotify()">
-    <span>🔔 提醒中心（<span id="notify-count">0</span>）</span>
-    <i class="fas fa-chevron-down" id="notify-icon" style="font-size:0.72rem;"></i>
-  </div>
-  <div class="notify-body" id="notify-list">
-    <div class="empty-notify">暂无提醒事项</div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
-     新增产品弹窗
-══════════════════════════════════ -->
-<div class="modal-mask" id="addProductMask">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title"><i class="fas fa-plus-circle" style="color:var(--apple-green);"></i> 新增产品</div>
-      <button class="modal-close" onclick="closeAddProduct()"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-item">
-          <span class="form-label">SKU <span style="color:var(--apple-red);">*</span></span>
-          <input id="apSku" placeholder="如：SKU-2026-XX01" autocomplete="off">
-        </div>
-        <div class="form-item">
-          <span class="form-label">ID 码 <span style="color:var(--apple-red);">*</span></span>
-          <input id="apId" placeholder="如：882910" autocomplete="off">
-        </div>
-        <div class="form-item" style="grid-column:1/-1;">
-          <span class="form-label">产品名称 <span style="color:var(--apple-red);">*</span></span>
-          <input id="apName" placeholder="如：户外防水运动背包" autocomplete="off">
-        </div>
-        <div class="form-item">
-          <span class="form-label">计划下单日期</span>
-          <div class="apple-date-wrapper" data-apple-date style="width:100%;">
-            <i class="fas fa-calendar-day apple-date-icon"></i>
-            <div class="apple-date-display empty" tabindex="0" style="padding:9px 26px 9px 28px;border-radius:9px;font-size:0.85rem;">选择日期</div>
-            <input type="hidden" id="apPlan" class="apple-date-value">
-            <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-          </div>
-        </div>
-        <div class="form-item">
-          <span class="form-label">营销节点</span>
-          <select id="apSolar" style="padding:9px 11px;border-radius:9px;border:1.5px solid transparent;background:var(--gray7);font-family:var(--font);font-size:0.85rem;transition:all 0.2s;">
-            <option value="">选择节点…</option>
-            <option value="1">1月（新年/清仓）</option>
-            <option value="2">2月（情人节/春季）</option>
-            <option value="3">3月（妇女节）</option>
-            <option value="4">4月（复活节）</option>
-            <option value="5">5月（母亲节）</option>
-            <option value="6">6月（父亲节）</option>
-            <option value="7">7月（Prime Day）</option>
-            <option value="8">8月（返校季）</option>
-            <option value="9">9月（秋季新品）</option>
-            <option value="10">10月（万圣节/Q4）</option>
-            <option value="11">11月（黑五/网一）</option>
-            <option value="12">12月（圣诞节）</option>
-          </select>
-        </div>
-        <div class="form-item" style="grid-column:1/-1;">
-          <span class="form-label">待跟进事项</span>
-          <textarea id="apRemark" placeholder="输入待跟进内容…" style="min-height:60px;"></textarea>
-        </div>
-        <div class="form-divider">供应商信息（选填）</div>
-        <div class="form-item">
-          <span class="form-label">主供应商</span>
-          <input id="apSupplier" placeholder="工厂/渠道名称">
-        </div>
-        <div class="form-item">
-          <span class="form-label">备选供应商</span>
-          <input id="apAltSupplier" placeholder="备选工厂/渠道">
-        </div>
-      </div>
-      <div class="err-tip" id="apErr">请完善必填项：SKU、ID 码、产品名称。</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeAddProduct()">取消</button>
-      <button class="btn btn-green" onclick="submitAddProduct()"><i class="fas fa-check"></i> 确认新增</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
-     快捷键面板
-══════════════════════════════════ -->
-<div class="shortcut-overlay" id="shortcutOverlay" onclick="hideShortcuts(event)">
-  <div class="shortcut-panel" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-      <h3 style="margin-bottom:0;">⌨️ 快捷键</h3>
-      <button class="modal-close" onclick="hideShortcuts(event)"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">新增产品</span>
-      <span><kbd class="kbd">N</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">聚焦搜索框</span>
-      <span><kbd class="kbd">/</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">关闭弹窗 / 清除搜索</span>
-      <span><kbd class="kbd">Esc</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">手动保存数据</span>
-      <span><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">S</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">导出 CSV</span>
-      <span><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">E</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">切换至工作台</span>
-      <span><kbd class="kbd">1</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">切换至营销日历</span>
-      <span><kbd class="kbd">2</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">切换至发货计划</span>
-      <span><kbd class="kbd">3</kbd></span>
-    </div>
-    <div class="shortcut-item">
-      <span class="shortcut-desc">刷新提醒</span>
-      <span><kbd class="kbd">R</kbd></span>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
-     JS 引擎
-══════════════════════════════════ -->
-<script>
-'use strict';
-/* ============================================================
-   常量与全局状态
-   ============================================================ */
-const VERSION = '4.0';
-const LS_KEY  = 'scpro_v4_data';
-const LS_CFG  = 'scpro_v4_cfg';
-
-const CALENDAR_DATA = {
-  1:  { cn:['新年目标','冬季清仓','春季备货'],           en:['New Year Resolution','Winter Clearance','Spring Prep'] },
-  2:  { cn:['情人节','总统日','春季新品'],              en:["Valentine's Day","Presidents' Day",'Spring Collection'] },
-  3:  { cn:['妇女节','圣帕特里克节','复活节备货'],        en:["Women's Day","St. Patrick's Day",'Easter Preparation'] },
-  4:  { cn:['复活节','地球日','夏季选品'],              en:['Easter / Spring Sale','Earth Day','Summer Sourcing'] },
-  5:  { cn:['母亲节','阵亡将士纪念日','夏季备货'],        en:["Mother's Day",'Memorial Day','Summer Stocking'] },
-  6:  { cn:['父亲节','毕业季','Prime Day 冲刺'],        en:["Father's Day",'Graduation Season','Prime Day Prep'] },
-  7:  { cn:['Prime Day 大促','独立日','返校季'],         en:['Prime Day Event','Independence Day','Back to School'] },
-  8:  { cn:['返校季高峰','夏季清仓','万圣节备货'],        en:['Back to School Peak','Summer Clearance','Halloween Order'] },
-  9:  { cn:['劳动节','秋季新品','Q4 物流计划'],          en:['Labor Day','Fall Season Start','Q4 Logistics Plan'] },
-  10: { cn:['万圣节','感恩节备货','节日发货'],            en:['Halloween (31st)','Thanksgiving Prep','Holiday Shipping'] },
-  11: { cn:['黑五/网一','感恩节','旺季销售'],             en:['Black Friday & Cyber Monday','Thanksgiving','Holiday Sales'] },
-  12: { cn:['圣诞节','节礼日','年终复盘'],              en:['Christmas','Boxing Day','Year End Review'] }
-};
-
-let currentLang    = 'cn';
-let activePopover  = null;
-let undoStack      = [];
-let autoSaveEnabled= true;
-let autoSaveTimer  = null;
-let warnDays       = 7;
-
-/* ============================================================
-   工具函数
-   ============================================================ */
-function esc(str) {
-  return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function norm(s) { return (s||'').toString().trim().toLowerCase(); }
-function today0() { const d=new Date(); d.setHours(0,0,0,0); return d; }
-function parseDate(s) { if (!s) return null; const d=new Date(s+'T00:00:00'); return isNaN(d)?null:d; }
-function fmtISO(d) { const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; }
-function addDays(s, n) { const d=parseDate(s); if(!d) return ''; d.setDate(d.getDate()+(Number(n)||0)); return fmtISO(d); }
-function daysDiff(s) { const d=parseDate(s); if(!d) return null; return Math.round((d-today0())/86400000); }
-
-function fmtDateCN(s) {
-  const d=parseDate(s); if(!d) return '';
-  return `${d.getFullYear()}年${String(d.getMonth()+1).padStart(2,'0')}月${String(d.getDate()).padStart(2,'0')}日`;
-}
-function fmtDateLabel(s) {
-  return fmtDateCN(s);
-}
-
-/* ============================================================
-   Toast 通知
-   ============================================================ */
-function showToast(msg, type='success', duration=2800) {
-  const icons = { success:'fas fa-check-circle', error:'fas fa-circle-xmark', info:'fas fa-circle-info', warning:'fas fa-triangle-exclamation' };
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<i class="${icons[type]||icons.info} toast-icon"></i><span>${msg}</span>`;
-  document.getElementById('toastContainer').appendChild(toast);
-  setTimeout(() => { toast.remove(); }, duration);
-}
-
-/* ============================================================
-   进度条
-   ============================================================ */
-function showProgress() {
-  const b = document.getElementById('progressBar');
-  b.className = 'progress-bar loading';
-  setTimeout(() => { b.className = 'progress-bar done'; setTimeout(()=>{ b.className='progress-bar'; }, 400); }, 600);
-}
-
-/* ============================================================
-   导航
-   ============================================================ */
-const TAB_META = {
-  dashboard: { title:'供应链协同看板', sub:'Integrated Supply Chain & Marketing Console' },
-  marketing:  { title:'跨境营销日历',   sub:'Global Marketing Calendar' },
-  shipments:  { title:'物流发货计划',   sub:'Shipment Plan Management' },
-  settings:   { title:'系统设置',       sub:'System Configuration' },
-};
-
-function switchTab(name, clickedEl) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  if (clickedEl) clickedEl.classList.add('active');
-  document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-  const meta = TAB_META[name]||{};
-  document.getElementById('page-header-title').textContent = meta.title||'';
-  document.getElementById('page-header-desc').textContent  = meta.sub||'';
-  if (name === 'shipments') { syncShipmentsFromProducts(); applyShipSearch(); }
-  if (name === 'marketing') renderCalendar();
-  if (name === 'dashboard') updateOverview();
-}
-
-/* ============================================================
-   时钟
-   ============================================================ */
-function updateClock() {
-  const now = new Date();
-  const fmt = tz => now.toLocaleTimeString('zh-CN', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12:false });
-  document.getElementById('time-cn').textContent = fmt('Asia/Shanghai');
-  document.getElementById('time-us').textContent = fmt('America/Los_Angeles');
-  document.getElementById('time-uk').textContent = fmt('Europe/London');
-  document.getElementById('time-eu').textContent = fmt('Europe/Paris');
-  document.getElementById('top-date').textContent = now.toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'});
-}
-
-/* ============================================================
-   统计看板更新
-   ============================================================ */
-function updateOverview() {
-  const rows = document.querySelectorAll('#productTbody tr[data-row="product"]');
-  let alertCount = 0;
-
-  rows.forEach(tr => {
-    ['plan-first-order','plan-img-delivery','plan-arrival','plan-factory'].forEach(cls => {
-      const v = tr.querySelector('.'+cls)?.value;
-      if (!v) return;
-      const diff = daysDiff(v);
-      if (diff !== null && diff <= 0) alertCount++;
-    });
-  });
-
-  const cards = document.querySelectorAll('#shipmentsContainer .shipment-card');
-  let transitCount = 0;
-  cards.forEach(c => { if (c.querySelector('.status-select')?.value === 'transit') transitCount++; });
-
-  document.getElementById('ov-transit').textContent     = transitCount;
-  document.getElementById('ov-transit-sub').textContent = `${cards.length} 个发货计划`;
-  document.getElementById('ov-alert').textContent       = alertCount;
-  document.getElementById('ov-alert-sub').textContent   = '含今日及逾期节点';
-}
-
-/* ============================================================
-   搜索与筛选（工作台）
-   ============================================================ */
-function getRowSearchText(tr) {
-  return norm([
-    tr.querySelector('.sku-field')?.value,
-    tr.querySelector('.id-field')?.value,
-    tr.querySelector('.name-field')?.value,
-    tr.querySelector('.supplier-field')?.value,
-    tr.querySelector('.alt-supplier-field')?.value,
-  ].join(' '));
-}
-
-function applyFilters() {
-  const q     = norm(document.getElementById('skuSearchInput').value);
-  const node  = document.getElementById('filterNode').value;
-  const smp   = document.getElementById('filterSample').value;
-  const oimg  = document.getElementById('filterOnImg').value;
-
-  let visCount = 0;
-  document.querySelectorAll('#productTbody tr[data-row="product"]').forEach(tr => {
-    const matchQ    = !q    || getRowSearchText(tr).includes(q);
-    const matchNode = !node || tr.querySelector('.solar-select')?.value === node;
-    const matchSmp  = !smp  || tr.querySelector('.sample-select')?.value === smp;
-    const matchOimg = !oimg || tr.querySelector('.onimg-select')?.value  === oimg;
-    const show = matchQ && matchNode && matchSmp && matchOimg;
-    tr.style.display = show ? '' : 'none';
-    if (show) visCount++;
-  });
-  return visCount;
-}
-
-function resetAll() {
-  document.getElementById('skuSearchInput').value = '';
-  document.getElementById('filterNode').value = '';
-  document.getElementById('filterSample').value = '';
-  document.getElementById('filterOnImg').value = '';
-  applyFilters();
-  clearCalendarHighlightKeepCurrent();
-}
-
-/* ============================================================
-   新增 / 删除产品
-   ============================================================ */
-function openAddProduct() {
-  document.getElementById('addProductMask').style.display = 'flex';
-  document.getElementById('apErr').style.display = 'none';
-  setTimeout(() => document.getElementById('apSku').focus(), 100);
-}
-
-function closeAddProduct() {
-  document.getElementById('addProductMask').style.display = 'none';
-  ['apSku','apId','apName','apSolar','apRemark','apSupplier','apAltSupplier'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  // 重置日期picker
-  const w = document.querySelector('#addProductMask [data-apple-date]');
-  if (w) resetAppleDateWrapper(w);
-}
-
-function validateSku(sku) {
-  if (!sku) return '请填写 SKU';
-  if (Array.from(document.querySelectorAll('.sku-field')).some(el => norm(el.value) === norm(sku))) return 'SKU 已存在，请更换';
-  return null;
-}
-
-function submitAddProduct() {
-  const sku      = document.getElementById('apSku').value.trim();
-  const id       = document.getElementById('apId').value.trim();
-  const name     = document.getElementById('apName').value.trim();
-  const plan     = document.getElementById('apPlan').value;
-  const solar    = document.getElementById('apSolar').value;
-  const remark   = document.getElementById('apRemark').value;
-  const supplier = document.getElementById('apSupplier').value.trim();
-  const altSup   = document.getElementById('apAltSupplier').value.trim();
-  const errEl    = document.getElementById('apErr');
-
-  if (!sku || !id || !name) { errEl.textContent = '请完善必填项：SKU、ID 码、产品名称。'; errEl.style.display='block'; return; }
-  const skuErr = validateSku(sku);
-  if (skuErr) { errEl.textContent = skuErr; errEl.style.display='block'; return; }
-
-  const tr = document.createElement('tr');
-  tr.setAttribute('data-row','product');
-  tr.setAttribute('data-starred','no');
-  tr.innerHTML = buildProductRowHTML({ sku, id, name, plan, solar, remark, supplier, altSup });
-
-  document.getElementById('productTbody').prepend(tr);
-  const solarSel = tr.querySelector('.solar-select');
-  if (solarSel && solar) solarSel.value = solar;
-
-  bindRowBehaviors(tr);
-  applyFilters();
-  syncShipmentsFromProducts();
-  checkReminders();
-  updateOverview();
-  scheduleAutoSave();
-  showToast(`已添加产品：${sku}`, 'success');
-  closeAddProduct();
-}
-
-function buildProductRowHTML({ sku='', id='', name='', plan='', solar='', remark='', supplier='', altSup='' }) {
-  const dateParts = [
-    ['计划下单', 'plan-order',       plan, plan?fmtDateCN(plan):'选择日期', !!plan],
-    ['首批下单', 'plan-first-order', '',   '选择日期', false],
-    ['样品接收', 'plan-sample',      '',   '选择日期', false],
-    ['图片交付', 'plan-img-delivery','',   '选择日期', false],
-    ['工厂交货', 'plan-factory',     '',   '选择日期', false],
-    ['FBA到货',  'plan-arrival',     '',   '选择日期', false],
-  ];
-  const datePicker = ([label, cls, val, txt, hasVal]) => `
-    <div class="plan-item">
-      <span class="plan-label">${label}</span>
-      <div class="apple-date-wrapper" data-apple-date>
-        <i class="fas fa-calendar-day apple-date-icon"></i>
-        <div class="apple-date-display ${hasVal?'has-value':'empty'}" tabindex="0">${txt}</div>
-        <input type="hidden" class="apple-date-value ${cls}" value="${val}">
-        <button class="apple-date-clear" ${hasVal?'':'style="display:none;"'} aria-label="清除">✕</button>
-      </div>
-    </div>`;
-
-  return `
-    <td>
-      <div class="img-uploader" data-img-uploader>
-        <img alt="preview">
-        <div class="img-hint"><i class="fas fa-image" style="font-size:0.95rem;color:var(--gray5);"></i><span>上传/粘贴</span></div>
-        <input type="file" accept="image/*" style="display:none;">
-      </div>
-    </td>
-    <td>
-      <input class="ghost-input ghost-sku sku-field" value="${esc(sku)}" placeholder="SKU">
-      <input class="ghost-input ghost-id id-field" value="${id?'ID: '+esc(id):''}" placeholder="ID码">
-      <input class="ghost-input name-field" value="${esc(name)}" placeholder="产品名称">
-    </td>
-    <td>
-      <div class="plan-grid">
-        ${dateParts.map(datePicker).join('')}
-        <div class="plan-item span-2"><span class="plan-label">Listing 状态/链接</span><input class="sf-text-input plan-listing" placeholder="如：已上架"></div>
-        <div class="plan-item span-2"><span class="plan-label">Amazon 发货单号</span><input class="sf-text-input plan-amz-text" placeholder="如：FBA17XXX"></div>
-      </div>
-    </td>
-    <td>
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <select class="sf-select solar-select">
-          <option value="">选择营销节点…</option>
-          ${[['1','1月（新年/清仓）'],['2','2月（情人节/春季）'],['3','3月（妇女节）'],['4','4月（复活节）'],['5','5月（母亲节）'],['6','6月（父亲节）'],['7','7月（Prime Day）'],['8','8月（返校季）'],['9','9月（秋季新品）'],['10','10月（万圣节/Q4）'],['11','11月（黑五/网一）'],['12','12月（圣诞节）']].map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}
-        </select>
-        <select class="sf-select sample-select" data-color-mode="sample">
-          <option value="no" selected>✘ 未借样</option>
-          <option value="yes">✔ 已借样拍摄</option>
-        </select>
-        <select class="sf-select onimg-select" data-color-mode="onimg">
-          <option value="no" selected>✘ 未上图</option>
-          <option value="yes">✔ 已上图</option>
-        </select>
-      </div>
-    </td>
-    <td>
-      <textarea class="remark-area" placeholder="输入待跟进内容…">${esc(remark)}</textarea>
-    </td>
-    <td>
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <input class="sf-text-input supplier-field" value="${esc(supplier)}" placeholder="主供应商（工厂/渠道）">
-        <input class="sf-text-input alt-supplier-field" value="${esc(altSup)}" placeholder="备选供应商（工厂/渠道）">
-        <textarea class="remark-area note-field" placeholder="备注（账期/起订量等）" style="height:44px;"></textarea>
-        <div style="display:flex;justify-content:flex-end;gap:5px;">
-          <button class="btn-row-star" onclick="toggleStarRow(this)" title="标记重要"><i class="fas fa-star"></i></button>
-          <button class="btn-row-del" onclick="deleteProductRow(this)" title="删除此产品"><i class="fas fa-trash"></i></button>
-        </div>
-      </div>
-    </td>`;
-}
-
-function deleteProductRow(btn) {
-  const tr = btn.closest('tr');
-  const sku = tr.querySelector('.sku-field')?.value?.trim() || '该产品';
-  // 记录撤销数据
-  const snapshot = {
-    html: tr.innerHTML,
-    starred: tr.getAttribute('data-starred'),
-    sku,
-    index: Array.from(tr.parentElement.children).indexOf(tr),
-  };
-  undoStack = [snapshot]; // 只保留最后一次
-
-  tr.style.transition = 'opacity 0.3s, transform 0.3s';
-  tr.style.opacity = '0';
-  tr.style.transform = 'translateX(20px)';
-  setTimeout(() => {
-    tr.remove();
-    syncShipmentsFromProducts();
-    checkReminders();
-    updateOverview();
-    scheduleAutoSave();
-  }, 280);
-
-  showUndoBar(`已删除产品「${sku}」`);
-  showToast(`已删除产品：${sku}`, 'warning');
-}
-
-function toggleStarRow(btn) {
-  const tr = btn.closest('tr');
-  const isStarred = tr.getAttribute('data-starred') === 'yes';
-  tr.setAttribute('data-starred', isStarred ? 'no' : 'yes');
-  btn.classList.toggle('active', !isStarred);
-  if (!isStarred) tr.classList.add('starred'); else tr.classList.remove('starred');
-  scheduleAutoSave();
-}
-
-/* ============================================================
-   撤销删除
-   ============================================================ */
-let undoTimer = null;
-function showUndoBar(msg) {
-  document.getElementById('undoMsg').textContent = msg;
-  const bar = document.getElementById('undoBar');
-  bar.classList.add('show');
-  clearTimeout(undoTimer);
-  undoTimer = setTimeout(clearUndo, 6000);
-}
-function clearUndo() {
-  document.getElementById('undoBar').classList.remove('show');
-  undoStack = [];
-}
-function undoDelete() {
-  if (!undoStack.length) return;
-  const snap = undoStack.pop();
-  const tbody = document.getElementById('productTbody');
-  const tr = document.createElement('tr');
-  tr.setAttribute('data-row','product');
-  tr.setAttribute('data-starred', snap.starred||'no');
-  tr.innerHTML = snap.html;
-  // 插回原位置
-  const children = Array.from(tbody.children);
-  if (snap.index < children.length) tbody.insertBefore(tr, children[snap.index]);
-  else tbody.appendChild(tr);
-  bindRowBehaviors(tr);
-  syncShipmentsFromProducts();
-  checkReminders();
-  updateOverview();
-  scheduleAutoSave();
-  clearUndo();
-  showToast('已恢复产品', 'success');
-}
-
-/* ============================================================
-   行为绑定（图片/颜色选择器/日期/输入联动）
-   ============================================================ */
-function bindRowBehaviors(tr) {
-  bindImgUploaders(tr);
-  bindColorSelects(tr);
-  bindAppleDatePickers(tr);
-  bindSolarSelect(tr);
-  bindProductRowChange(tr);
-  // 初始化星标状态
-  if (tr.getAttribute('data-starred')==='yes') {
-    tr.classList.add('starred');
-    const starBtn = tr.querySelector('.btn-row-star');
-    if (starBtn) starBtn.classList.add('active');
-  }
-}
-
-function bindProductRowChange(scopeEl) {
-  scopeEl.querySelectorAll('input, select, textarea').forEach(el => {
-    if (el.__prcBound) return; el.__prcBound = true;
-    const handler = () => { syncShipmentsFromProducts(); updateOverview(); scheduleAutoSave(); };
-    el.addEventListener('input', handler);
-    el.addEventListener('change', handler);
-  });
-}
-
-/* ============================================================
-   图片上传 & Ctrl+V 粘贴
-   ============================================================ */
-function applyImageToUploader(u, file) {
-  if (!file || !file.type.startsWith('image/')) return;
-  const img = u.querySelector('img'), hint = u.querySelector('.img-hint');
-  const reader = new FileReader();
-  reader.onload = e => { img.src = e.target.result; img.style.display='block'; if(hint)hint.style.display='none'; };
-  reader.readAsDataURL(file);
-}
-function bindImgUploaders(scope) {
-  (scope||document).querySelectorAll('[data-img-uploader]').forEach(u => {
-    if (u.__imgBound) return; u.__imgBound = true;
-    const input = u.querySelector('input[type="file"]');
-    u.addEventListener('click', () => input && input.click());
-    input.addEventListener('change', () => { if(input.files[0]) applyImageToUploader(u,input.files[0]); });
-    u.addEventListener('mouseenter', () => { u.classList.add('paste-ready'); u._pasteActive=true; });
-    u.addEventListener('mouseleave', () => { u.classList.remove('paste-ready'); u._pasteActive=false; });
-  });
-}
-document.addEventListener('paste', e => {
-  const u = document.querySelector('[data-img-uploader].paste-ready');
-  if (!u) return;
-  for (const item of (e.clipboardData?.items||[])) {
-    if (item.type.startsWith('image/')) { applyImageToUploader(u, item.getAsFile()); e.preventDefault(); break; }
-  }
-});
-
-/* ============================================================
-   颜色选择器
-   ============================================================ */
-function applySelectColor(sel) {
-  sel.classList.remove('sel-ok','sel-warn','sel-muted','sel-blue');
-  const mode = sel.dataset.colorMode, v = sel.value;
-  if (mode==='sample') sel.classList.add(v==='yes'?'sel-ok':'sel-warn');
-  if (mode==='onimg')  sel.classList.add(v==='yes'?'sel-blue':'sel-muted');
-}
-function bindColorSelects(scope) {
-  (scope||document).querySelectorAll('[data-color-mode]').forEach(sel => {
-    if (sel.__colorBound) return; sel.__colorBound = true;
-    sel.addEventListener('change', () => applySelectColor(sel));
-    applySelectColor(sel);
-  });
-}
-
-/* ============================================================
-   Apple 日期选择器引擎
-   ============================================================ */
-function resetAppleDateWrapper(wrapper) {
-  const hidden  = wrapper.querySelector('input[type="hidden"]');
-  const display = wrapper.querySelector('.apple-date-display');
-  const clearBtn= wrapper.querySelector('.apple-date-clear');
-  if (hidden)  hidden.value = '';
-  if (display) { display.className = 'apple-date-display empty'; display.textContent = '选择日期'; }
-  if (clearBtn) clearBtn.style.display = 'none';
-}
-
-function setAppleDateValue(wrapper, hidden, dateStr) {
-  hidden.value = dateStr;
-  const display = wrapper.querySelector('.apple-date-display');
-  const clearBtn= wrapper.querySelector('.apple-date-clear');
-  if (dateStr) {
-    display.textContent = fmtDateLabel(dateStr);
-    display.className = 'apple-date-display has-value';
-    if (clearBtn) clearBtn.style.display = 'flex';
-  } else {
-    const emptyTxt = display.dataset.emptyText || '选择日期';
-    display.textContent = emptyTxt;
-    display.className = 'apple-date-display empty';
-    if (clearBtn) clearBtn.style.display = 'none';
-  }
-  hidden.dispatchEvent(new Event('change', {bubbles:true}));
-  hidden.dispatchEvent(new Event('input',  {bubbles:true}));
-  if (hidden.classList.contains('log-ship')) recalcLogistics(hidden);
-}
-
-function buildCalendarPopover(wrapper, hidden) {
-  closeAllPopovers();
-  let viewDate = hidden.value ? new Date(hidden.value+'T00:00:00') : new Date();
-  let viewMode = 'days';
-  const MONTHS_CN = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-  const WEEKS_CN  = ['日','一','二','三','四','五','六'];
-
-  function render() {
-    const old = wrapper.querySelector('.apple-picker-popover'); if(old) old.remove();
-    wrapper.style.position = 'relative';
-    const pop = document.createElement('div'); pop.className = 'apple-picker-popover'; wrapper.appendChild(pop); activePopover = pop;
-    const yr = viewDate.getFullYear(), mo = viewDate.getMonth();
-    const todayD = today0();
-
-    // 导航栏
-    const nav = document.createElement('div'); nav.className = 'apple-picker-nav';
-    const btnP = document.createElement('button'); btnP.innerHTML='<i class="fas fa-chevron-left"></i>';
-    btnP.onclick = e => { e.stopPropagation(); if(viewMode==='days')viewDate.setMonth(mo-1); else if(viewMode==='months')viewDate.setFullYear(yr-1); else viewDate.setFullYear(yr-12); render(); };
-    const btnN = document.createElement('button'); btnN.innerHTML='<i class="fas fa-chevron-right"></i>';
-    btnN.onclick = e => { e.stopPropagation(); if(viewMode==='days')viewDate.setMonth(mo+1); else if(viewMode==='months')viewDate.setFullYear(yr+1); else viewDate.setFullYear(yr+12); render(); };
-    const title = document.createElement('div'); title.className='apple-picker-month-year';
-    if(viewMode==='days') title.textContent=`${yr}年${mo+1}月`;
-    else if(viewMode==='months') title.textContent=`${yr}年`;
-    else { const sy=Math.floor(yr/12)*12; title.textContent=`${sy}–${sy+11}`; }
-    title.onclick = e => { e.stopPropagation(); viewMode=viewMode==='days'?'months':viewMode==='months'?'years':'days'; render(); };
-    nav.append(btnP, title, btnN); pop.appendChild(nav);
-
-    if (viewMode==='days') {
-      const wkRow = document.createElement('div'); wkRow.className='apple-picker-weekdays';
-      WEEKS_CN.forEach(d => { const s=document.createElement('span'); s.textContent=d; wkRow.appendChild(s); });
-      pop.appendChild(wkRow);
-      const grid = document.createElement('div'); grid.className='apple-picker-days';
-      const firstDay = new Date(yr,mo,1).getDay();
-      const daysInMo = new Date(yr,mo+1,0).getDate();
-      const prevDays = new Date(yr,mo,0).getDate();
-      const selDate  = hidden.value ? new Date(hidden.value+'T00:00:00') : null;
-      for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='apple-day other-month';el.textContent=prevDays-firstDay+1+i;grid.appendChild(el);}
-      for(let d=1;d<=daysInMo;d++){
-        const el=document.createElement('div'); el.className='apple-day'; el.textContent=d;
-        const thisDate=new Date(yr,mo,d);
-        if(thisDate.getTime()===todayD.getTime()) el.classList.add('today');
-        if(selDate&&thisDate.getTime()===selDate.getTime()) el.classList.add('selected');
-        el.onclick=e=>{e.stopPropagation();setAppleDateValue(wrapper,hidden,`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);closeAllPopovers();};
-        grid.appendChild(el);
-      }
-      const rem=42-firstDay-daysInMo;
-      for(let i=1;i<=rem;i++){const el=document.createElement('div');el.className='apple-day other-month';el.textContent=i;grid.appendChild(el);}
-      pop.appendChild(grid);
-
-    } else if (viewMode==='months') {
-      const grid=document.createElement('div'); grid.className='apple-ym-grid';
-      MONTHS_CN.forEach((m,idx)=>{
-        const el=document.createElement('div'); el.className='apple-ym-cell'; el.textContent=m;
-        if(idx===mo) el.classList.add('current-ym');
-        el.onclick=e=>{e.stopPropagation();viewDate.setMonth(idx);viewMode='days';render();};
-        grid.appendChild(el);
-      }); pop.appendChild(grid);
-
-    } else {
-      const startY=Math.floor(yr/12)*12;
-      const scr=document.createElement('div'); scr.className='apple-ym-scroll';
-      const grid=document.createElement('div'); grid.className='apple-ym-grid';
-      for(let y=startY;y<startY+12;y++){
-        const el=document.createElement('div'); el.className='apple-ym-cell'; el.textContent=y;
-        if(y===yr) el.classList.add('current-ym');
-        el.onclick=e=>{e.stopPropagation();viewDate.setFullYear(y);viewMode='months';render();};
-        grid.appendChild(el);
-      }
-      scr.appendChild(grid); pop.appendChild(scr);
-    }
-
-    // 位置修正
-    requestAnimationFrame(() => {
-      const r=pop.getBoundingClientRect();
-      if(r.bottom>window.innerHeight-8){pop.style.top='auto';pop.style.bottom='calc(100% + 6px)';}
-      if(r.right>window.innerWidth-8){pop.style.left='auto';pop.style.right='0';}
-    });
-  }
-  render();
-}
-
-function closeAllPopovers() {
-  document.querySelectorAll('.apple-picker-popover').forEach(p=>p.remove());
-  activePopover = null;
-}
-
-function bindAppleDatePickers(scope) {
-  (scope||document).querySelectorAll('[data-apple-date]').forEach(wrapper => {
-    if (wrapper.__appleBound) return; wrapper.__appleBound = true;
-    const display  = wrapper.querySelector('.apple-date-display');
-    const hidden   = wrapper.querySelector('input[type="hidden"]');
-    const clearBtn = wrapper.querySelector('.apple-date-clear');
-    if (!display||!hidden) return;
-
-    // 空状态占位文字 — 始终固定，不读取当前显示内容（防止已有日期值被误存为占位符）
-    display.dataset.emptyText = display.classList.contains('readonly-auto') ? '自动计算' : '选择日期';
-
-    // 初始化已有值
-    if (hidden.value) {
-      display.textContent = fmtDateLabel(hidden.value);
-      display.className = 'apple-date-display has-value';
-      if (clearBtn) clearBtn.style.display = 'flex';
-    }
-
-    // readonly 自动计算字段不可点击
-    if (display.classList.contains('readonly-auto')) return;
-
-    display.addEventListener('click', e => {
-      e.stopPropagation();
-      activePopover && wrapper.contains(activePopover) ? closeAllPopovers() : buildCalendarPopover(wrapper, hidden);
-    });
-    display.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();buildCalendarPopover(wrapper,hidden);} });
-    if (clearBtn) clearBtn.addEventListener('click', e => { e.stopPropagation(); setAppleDateValue(wrapper, hidden, ''); });
-  });
-}
-
-document.addEventListener('click', e => {
-  if (activePopover && !e.target.closest('[data-apple-date]')) closeAllPopovers();
-});
-
-/* ============================================================
-   营销节点选择器
-   ============================================================ */
-function bindSolarSelect(scope) {
-  (scope||document).querySelectorAll('.solar-select').forEach(sel => {
-    if (sel.__solarBound) return; sel.__solarBound = true;
-    sel.addEventListener('change', e => highlightMarketingMonth(e.target.value, e.shiftKey));
-    if (sel.value) highlightMarketingMonth(sel.value, false);
-  });
-}
-
-/* ============================================================
-   营销日历
-   ============================================================ */
-function renderCalendar() {
-  const grid = document.getElementById('calendarGrid'); grid.innerHTML = '';
-  const SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const curM  = new Date().getMonth();
-  const HIGHLIGHT = ['Prime','Black Friday','Halloween','Christmas','黑五','万圣节','圣诞'];
-
-  for (let i=1;i<=12;i++) {
-    const data = CALENDAR_DATA[i];
-    const content = currentLang==='cn' ? data.cn : data.en;
-    const isActive = (i===curM+1);
-    const title = currentLang==='cn' ? `${i}月` : `${SHORT[i-1]}`;
-    const badge = isActive ? '<span class="badge-now">本月</span>' : '';
-    const lis = content.map(item => {
-      const hi = HIGHLIGHT.some(w=>item.includes(w));
-      return `<li>${hi?`<strong style="color:#ea580c;">${item}</strong>`:item}</li>`;
-    }).join('');
-    grid.insertAdjacentHTML('beforeend', `
-      <div class="cal-month${isActive?' cal-active':''}" data-month="${i}">
-        <h3>${title} ${badge}</h3>
-        <ul>${lis}</ul>
-      </div>`);
-  }
-}
-
-function clearCalendarHighlightKeepCurrent() {
-  document.querySelectorAll('#calendarGrid .cal-month').forEach(m => m.classList.remove('cal-active'));
-  const cur = document.querySelector(`#calendarGrid .cal-month[data-month="${new Date().getMonth()+1}"]`);
-  if (cur) cur.classList.add('cal-active');
-}
-function highlightMarketingMonth(mon, jump=false) {
-  if (!mon) return;
-  clearCalendarHighlightKeepCurrent();
-  const t = document.querySelector(`#calendarGrid .cal-month[data-month="${mon}"]`);
-  if (t) {
-    t.classList.add('cal-active');
-    if (jump) {
-      const navEl = document.querySelector('.nav-item[onclick*="marketing"]');
-      switchTab('marketing', navEl);
-      setTimeout(() => t.scrollIntoView({behavior:'smooth',block:'center'}), 80);
-    }
-  }
-}
-function changeLang(lang) {
-  currentLang = lang;
-  document.getElementById('langSelect').value = lang;
-  renderCalendar();
-  saveSettings();
-}
-
-/* ============================================================
-   发货计划逻辑
-   ============================================================ */
-function addDaysHelper(s, n) { return addDays(s, n); }
-
-function autoUpdateShipmentStatus(card) {
-  const statusSel = card.querySelector('.status-select'); if (!statusSel) return;
-  const today = today0();
-  const dFba   = parseDate(card.querySelector('.fbaArrival')?.value);
-  const dAmz   = parseDate(card.querySelector('.ship-amzDate')?.value);
-  let status = 'pending';
-  if (dFba && today >= dFba) status = 'received';
-  else if (dAmz && today >= dAmz) status = 'transit';
-  if (statusSel.value !== status) { statusSel.value = status; applyStatusStyle(statusSel); }
-}
-
-function applyStatusStyle(sel) {
-  sel.classList.remove('st-pending','st-transit','st-received');
-  sel.classList.add({'pending':'st-pending','transit':'st-transit','received':'st-received'}[sel.value]||'st-pending');
-}
-
-function updateLogArrive(logRow, arrive) {
-  const arriveHidden = logRow.querySelector('.log-arrive'); if (!arriveHidden) return;
-  arriveHidden.value = arrive;
-  const wrapper = logRow.querySelectorAll('[data-apple-date]');
-  // 第3个wrapper是到货日期
-  wrapper.forEach(w => {
-    const h = w.querySelector('.log-arrive');
-    if (h) {
-      const d = w.querySelector('.apple-date-display');
-      if (d) {
-        if (arrive) { d.textContent = fmtDateLabel(arrive); d.className = 'apple-date-display has-value readonly-auto'; }
-        else { d.textContent = '自动计算'; d.className = 'apple-date-display empty readonly-auto'; }
-      }
-    }
-  });
-}
-
-function recalcLogistics(anyEl) {
-  const card = anyEl.closest('.shipment-card'); if (!card) return;
-  let latestArrive = '';
-  card.querySelectorAll('[data-logrow]').forEach(row => {
-    const ship = row.querySelector('.log-ship')?.value || '';
-    const days = row.querySelector('.log-days')?.value || '0';
-    const arrive = addDays(ship, days);
-    updateLogArrive(row, arrive);
-    if (arrive) latestArrive = arrive;
-  });
-  if (latestArrive) {
-    const fbaHidden = card.querySelector('.fbaArrival');
-    if (fbaHidden) {
-      const fbaW = fbaHidden.closest('[data-apple-date]');
-      if (fbaW) { const fd=fbaW.querySelector('.apple-date-display'); if(fd){fd.textContent=fmtDateLabel(latestArrive);fd.className='apple-date-display has-value';} }
-      fbaHidden.value = latestArrive;
-      const fc = fbaHidden.closest('[data-apple-date]')?.querySelector('.apple-date-clear');
-      if (fc) fc.style.display = 'flex';
-    }
-  }
-  autoUpdateShipmentStatus(card);
-  updateOverview();
-  scheduleAutoSave();
-}
-
-function addLogisticsRow(btn) {
-  const card = btn.closest('.shipment-card');
-  const container = card.querySelector('[data-rows]'); if (!container) return;
-  const row = document.createElement('div'); row.className='log-row'; row.setAttribute('data-logrow','');
-  row.innerHTML = `
-    <div>
-      <div class="mini-label">发货日期</div>
-      <div class="apple-date-wrapper" data-apple-date>
-        <i class="fas fa-calendar-day apple-date-icon"></i>
-        <div class="apple-date-display empty" tabindex="0" style="font-size:0.75rem;padding:6px 24px 6px 26px;">选择日期</div>
-        <input type="hidden" class="apple-date-value log-ship">
-        <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-      </div>
-    </div>
-    <div>
-      <div class="mini-label">时效（天）</div>
-      <input type="number" class="mini-number log-days" value="0" min="0" onchange="recalcLogistics(this)">
-    </div>
-    <div>
-      <div class="mini-label">到货日期（自动）</div>
-      <div class="apple-date-wrapper" data-apple-date>
-        <i class="fas fa-calendar-day apple-date-icon"></i>
-        <div class="apple-date-display empty readonly-auto" tabindex="0" style="font-size:0.75rem;padding:6px 24px 6px 26px;">自动计算</div>
-        <input type="hidden" class="apple-date-value log-arrive" readonly>
-        <button class="apple-date-clear" style="display:none;pointer-events:none;">✕</button>
-      </div>
-    </div>
-    <button class="btn-del" onclick="removeLogisticsRow(this)"><i class="fas fa-trash"></i></button>`;
-  container.appendChild(row);
-  bindAppleDatePickers(row);
-  recalcLogistics(row.querySelector('.log-days'));
-}
-
-function removeLogisticsRow(btn) {
-  const card = btn.closest('.shipment-card');
-  btn.closest('[data-logrow]')?.remove();
-  const any = card.querySelector('.log-days');
-  if (any) recalcLogistics(any); else autoUpdateShipmentStatus(card);
-  scheduleAutoSave();
-}
-
-/* ============================================================
-   构建发货计划卡片
-   ============================================================ */
-function makeDateRow(label, cls) {
-  return `
-    <div class="date-item">
-      <span class="date-label">${label}</span>
-      <div class="apple-date-wrapper" data-apple-date>
-        <i class="fas fa-calendar-day apple-date-icon"></i>
-        <div class="apple-date-display empty" tabindex="0">选择日期</div>
-        <input type="hidden" class="apple-date-value ${cls}">
-        <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-      </div>
-    </div>`;
-}
-
-function buildShipmentCardHTML(sku, name) {
-  return `
-  <div class="shipment-card" data-shipment="${esc(sku)}">
-    <div class="shipment-header" onclick="toggleCard(this)">
-      <div class="sku-info">
-        <span class="sku-name">${esc(sku)}</span>
-        <span class="sku-badge">${esc(name||'')}</span>
-      </div>
-      <div class="header-controls">
-        <select class="status-select st-pending" onchange="applyStatusStyle(this);scheduleAutoSave();event.stopPropagation();">
-          <option value="pending">⏳ 待发货</option>
-          <option value="transit">✈ 运输中</option>
-          <option value="received">✅ 已签收</option>
-        </select>
-        <button class="collapse-btn" title="折叠/展开"><i class="fas fa-chevron-down"></i></button>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="date-grid">
-        ${makeDateRow('首批下单','ship-firstOrder')}
-        ${makeDateRow('样品接收','ship-sample')}
-        ${makeDateRow('主图日期','ship-mainImg')}
-        ${makeDateRow('工厂交货','ship-factory')}
-        ${makeDateRow('Amazon 发货','ship-amzDate')}
-        ${makeDateRow('FBA 到货','fbaArrival')}
-        <div class="date-item" style="grid-column:span 2;">
-          <span class="date-label">Amazon 发货信息</span>
-          <input class="sf-field ship-amzText" placeholder="Shipment ID / 物流商 / 渠道" onchange="scheduleAutoSave()">
-        </div>
-      </div>
-
-      <div class="logistics-panel">
-        <div class="logistics-head">
-          <div class="logistics-title"><i class="fas fa-route"></i> 物流计划</div>
-          <button class="btn btn-green btn-xs" onclick="addLogisticsRow(this)"><i class="fas fa-plus"></i> 新增物流段</button>
-        </div>
-        <div class="logistics-rows" data-rows>
-          <div class="log-row" data-logrow>
-            <div>
-              <div class="mini-label">发货日期</div>
-              <div class="apple-date-wrapper" data-apple-date>
-                <i class="fas fa-calendar-day apple-date-icon"></i>
-                <div class="apple-date-display empty" tabindex="0" style="font-size:0.75rem;padding:6px 24px 6px 26px;">选择日期</div>
-                <input type="hidden" class="apple-date-value log-ship">
-                <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-              </div>
-            </div>
-            <div>
-              <div class="mini-label">时效（天）</div>
-              <input type="number" class="mini-number log-days" value="0" min="0" onchange="recalcLogistics(this)">
-            </div>
-            <div>
-              <div class="mini-label">到货日期（自动）</div>
-              <div class="apple-date-wrapper" data-apple-date>
-                <i class="fas fa-calendar-day apple-date-icon"></i>
-                <div class="apple-date-display empty readonly-auto" style="font-size:0.75rem;padding:6px 24px 6px 26px;">自动计算</div>
-                <input type="hidden" class="apple-date-value log-arrive" readonly>
-                <button class="apple-date-clear" style="display:none;pointer-events:none;">✕</button>
-              </div>
-            </div>
-            <button class="btn-del" onclick="removeLogisticsRow(this)"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <textarea class="remark-box ship-remark" placeholder="发货备注（如：特殊包装要求、紧急情况说明等）…" onchange="scheduleAutoSave()"></textarea>
-      </div>
-
-      <div class="supplier-panel">
-        <div class="supplier-panel-title"><i class="fas fa-address-book" style="color:var(--apple-green);"></i>供应商联系信息</div>
-        <div class="supplier-grid">
-          <div class="date-item">
-            <span class="date-label">供应商电话</span>
-            <input class="sf-field ship-supplier-phone" placeholder="+86 138 0000 0000" onchange="scheduleAutoSave()">
-          </div>
-          <div class="date-item">
-            <span class="date-label">首次沟通日期</span>
-            <div class="apple-date-wrapper" data-apple-date>
-              <i class="fas fa-calendar-day apple-date-icon"></i>
-              <div class="apple-date-display empty" tabindex="0">选择日期</div>
-              <input type="hidden" class="apple-date-value ship-first-contact">
-              <button class="apple-date-clear" style="display:none;" aria-label="清除">✕</button>
-            </div>
-          </div>
-          <div class="date-item" style="grid-column:1/-1;">
-            <span class="date-label">供应商 1688 链接</span>
-            <input class="sf-field ship-supplier-1688" placeholder="https://shop.1688.com/…" onchange="scheduleAutoSave()">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-/* ============================================================
-   折叠/展开发货卡片
-   ============================================================ */
-function toggleCard(headerEl) {
-  // 点击到 select 或 button 不触发折叠
-  if (event.target.tagName === 'SELECT' || event.target.closest('button.collapse-btn')) return;
-  if (!event.target.closest('.collapse-btn') && event.target.tagName !== 'BUTTON') {
-    // 只有点击到标题区域才折叠
-  }
-  const card = headerEl.closest('.shipment-card');
-  card.classList.toggle('collapsed');
-}
-function toggleAllCards(collapse) {
-  document.querySelectorAll('#shipmentsContainer .shipment-card').forEach(c => {
-    if (collapse) c.classList.add('collapsed'); else c.classList.remove('collapsed');
-  });
-}
-
-/* ============================================================
-   产品 ↔ 发货计划同步
-   ============================================================ */
-function getProductsSnapshot() {
-  return Array.from(document.querySelectorAll('#productTbody tr[data-row="product"]')).map(tr => ({
-    tr,
-    sku:  (tr.querySelector('.sku-field')?.value || '').trim(),
-    name: (tr.querySelector('.name-field')?.value || '').trim(),
-  })).filter(x => x.sku);
-}
-
-function setAppleDateIfEmpty(card, cls, val) {
-  const hidden = card.querySelector('.'+cls); if (!hidden || hidden.value || !val) return;
-  const w = hidden.closest('[data-apple-date]');
-  if (w) setAppleDateValue(w, hidden, val); else hidden.value = val;
-}
-
-function syncShipmentsFromProducts() {
-  const container = document.getElementById('shipmentsContainer');
-  const products  = getProductsSnapshot();
-  const existing  = Array.from(container.querySelectorAll('.shipment-card'));
-  const existSkus = new Set(existing.map(c => c.getAttribute('data-shipment')));
-
-  // 新增卡片
-  products.forEach(p => {
-    if (!existSkus.has(p.sku)) {
-      container.insertAdjacentHTML('beforeend', buildShipmentCardHTML(p.sku, p.name));
-    } else {
-      const card = container.querySelector(`.shipment-card[data-shipment="${CSS.escape(p.sku)}"]`);
-      const badge = card?.querySelector('.sku-badge'); if (badge) badge.textContent = p.name;
-    }
-  });
-
-  // 删除孤立卡片
-  existing.forEach(card => {
-    if (!products.some(p => p.sku === card.getAttribute('data-shipment'))) card.remove();
-  });
-
-  // 初始化新卡片
-  container.querySelectorAll('.shipment-card').forEach(card => {
-    if (!card.__inited) {
-      card.__inited = true;
-      bindAppleDatePickers(card);
-      // 绑定状态select
-      const statusSel = card.querySelector('.status-select');
-      if (statusSel && !statusSel.__bound) { statusSel.__bound=true; statusSel.addEventListener('change',()=>{applyStatusStyle(statusSel);updateOverview();scheduleAutoSave();}); }
-      const logDays = card.querySelector('.log-days'); if (logDays) recalcLogistics(logDays);
-    }
-    autoUpdateShipmentStatus(card);
-  });
-
-  // 同步产品日期到发货卡片（只在空时填充）
-  products.forEach(p => {
-    const card = container.querySelector(`.shipment-card[data-shipment="${CSS.escape(p.sku)}"]`);
-    if (!card) return;
-    setAppleDateIfEmpty(card, 'ship-firstOrder', p.tr.querySelector('.plan-first-order')?.value);
-    setAppleDateIfEmpty(card, 'ship-sample',     p.tr.querySelector('.plan-sample')?.value);
-    setAppleDateIfEmpty(card, 'ship-mainImg',    p.tr.querySelector('.plan-img-delivery')?.value);
-    setAppleDateIfEmpty(card, 'ship-factory',    p.tr.querySelector('.plan-factory')?.value);
-    setAppleDateIfEmpty(card, 'fbaArrival',      p.tr.querySelector('.plan-arrival')?.value);
-    const amzText = card.querySelector('.ship-amzText');
-    if (amzText && !amzText.value) amzText.value = p.tr.querySelector('.plan-amz-text')?.value || '';
-    autoUpdateShipmentStatus(card);
-  });
-
-  // 更新导航角标
-  const transit = container.querySelectorAll('.status-select').length;
-  const badge = document.getElementById('shipBadge');
-  if (transit > 0) { badge.style.display='inline-block'; badge.textContent=transit; } else { badge.style.display='none'; }
-
-  updateOverview();
-}
-
-/* ============================================================
-   发货搜索
-   ============================================================ */
-function getShipCardText(card) {
-  return [
-    card.getAttribute('data-shipment'),
-    card.querySelector('.sku-badge')?.textContent,
-    card.querySelector('.ship-remark')?.value,
-    card.querySelector('.ship-amzText')?.value,
-    card.querySelector('.ship-supplier-phone')?.value,
-    card.querySelector('.ship-supplier-1688')?.value,
-  ].join(' ').toLowerCase();
-}
-
-function applyShipSearch() {
-  const q  = norm(document.getElementById('shipSearchInput')?.value || '');
-  const st = document.getElementById('shipFilterStatus')?.value || '';
-  let vis = 0;
-  document.querySelectorAll('#shipmentsContainer .shipment-card').forEach(card => {
-    const matchQ  = !q  || getShipCardText(card).includes(q);
-    const matchSt = !st || card.querySelector('.status-select')?.value === st;
-    const show = matchQ && matchSt;
-    card.style.display = show ? '' : 'none';
-    if (show) vis++;
-  });
-  const el = document.getElementById('shipSearchCount');
-  if (el) el.textContent = (q||st) ? `找到 ${vis} 条` : '';
-}
-
-function resetShipSearch() {
-  const inp = document.getElementById('shipSearchInput'); if (inp) inp.value = '';
-  const st  = document.getElementById('shipFilterStatus'); if (st) st.value = '';
-  applyShipSearch();
-}
-
-/* ============================================================
-   提醒中心（多层级：逾期 / 今日 / 7天预警）
-   ============================================================ */
-function checkReminders(forceOpen=false) {
-  const products = getProductsSnapshot();
-  const listEl   = document.getElementById('notify-list');
-  const countEl  = document.getElementById('notify-count');
-
-  const overdue = [], todayArr = [], soonArr = [];
-
-  const DATE_CHECKS = [
-    { cls:'plan-first-order', label:'首批下单日' },
-    { cls:'plan-img-delivery',label:'主图交付日' },
-    { cls:'plan-arrival',     label:'FBA到货日'  },
-    { cls:'plan-factory',     label:'工厂交货日' },
-    { cls:'plan-sample',      label:'样品接收日' },
-  ];
-
-  products.forEach(p => {
-    DATE_CHECKS.forEach(({ cls, label }) => {
-      const v = p.tr.querySelector('.'+cls)?.value; if (!v) return;
-      const diff = daysDiff(v);
-      if (diff === null) return;
-      const item = { sku: p.sku, label, date: v, diff };
-      if (diff < 0)                   overdue.push(item);
-      else if (diff === 0)            todayArr.push(item);
-      else if (diff <= warnDays)      soonArr.push(item);
-    });
-  });
-
-  const total = overdue.length + todayArr.length + soonArr.length;
-  countEl.textContent = total;
-
-  listEl.innerHTML = '';
-  if (!total) { listEl.innerHTML = '<div class="empty-notify">暂无提醒事项 ✓</div>'; return; }
-
-  function addSection(title, items, dotClass) {
-    if (!items.length) return;
-    listEl.insertAdjacentHTML('beforeend', `<div class="notify-section-title">${title}</div>`);
-    items.forEach(r => {
-      const div = document.createElement('div'); div.className = 'notify-item';
-      div.innerHTML = `
-        <div class="ni-dot ${dotClass}"></div>
-        <div>
-          <div class="ni-title">${r.label}  —  ${r.sku}</div>
-          <div class="ni-desc">${fmtDateCN(r.date)}${r.diff<0?` · 逾期 ${Math.abs(r.diff)} 天`:r.diff===0?' · 今日':` · 还有 ${r.diff} 天`}</div>
-        </div>`;
-      listEl.appendChild(div);
-    });
-  }
-
-  addSection('🔴 逾期', overdue, 'overdue');
-  addSection('🟡 今日节点', todayArr, 'today');
-  addSection('🔵 即将到期', soonArr, 'soon');
-
-  if (forceOpen) {
-    const dock = document.getElementById('notification-dock');
-    dock.classList.remove('minimized');
-    document.getElementById('notify-icon').className = 'fas fa-chevron-down';
-  }
-}
-
-function toggleNotify() {
-  const dock = document.getElementById('notification-dock');
-  const icon = document.getElementById('notify-icon');
-  dock.classList.toggle('minimized');
-  icon.className = dock.classList.contains('minimized') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-  icon.style.fontSize = '0.72rem';
-}
-
-/* ============================================================
-   数据持久化 (localStorage)
-   ============================================================ */
-function serializeProductRow(tr) {
-  const get = cls => tr.querySelector('.'+cls)?.value || '';
-  const getHidden = cls => tr.querySelector('.'+cls+'[type="hidden"], input[type="hidden"].'+cls)?.value || '';
-  return {
-    sku:     get('sku-field'),
-    id:      get('id-field').replace(/^ID: /,''),
-    name:    get('name-field'),
-    starred: tr.getAttribute('data-starred')||'no',
-    planOrder:    tr.querySelector('.plan-order')?.value || '',
-    firstOrder:   tr.querySelector('.plan-first-order')?.value || '',
-    sample:       tr.querySelector('.plan-sample')?.value || '',
-    imgDelivery:  tr.querySelector('.plan-img-delivery')?.value || '',
-    factory:      tr.querySelector('.plan-factory')?.value || '',
-    arrival:      tr.querySelector('.plan-arrival')?.value || '',
-    listing:      get('plan-listing'),
-    amzText:      get('plan-amz-text'),
-    solar:        tr.querySelector('.solar-select')?.value || '',
-    sampleStatus: tr.querySelector('.sample-select')?.value || 'no',
-    onImg:        tr.querySelector('.onimg-select')?.value  || 'no',
-    remark:       tr.querySelector('.remark-area:not(.note-field)')?.value || '',
-    supplier:     get('supplier-field'),
-    altSupplier:  get('alt-supplier-field'),
-    notes:        tr.querySelector('.note-field')?.value || '',
-  };
-}
-
-function serializeShipCard(card) {
-  const get = cls => card.querySelector('.'+cls)?.value || '';
-  const getDate = cls => { const h=card.querySelector('.'+cls); return h?.value||''; };
-  const logRows = Array.from(card.querySelectorAll('[data-logrow]')).map(row => ({
-    ship:   row.querySelector('.log-ship')?.value || '',
-    days:   row.querySelector('.log-days')?.value || '0',
-  }));
-  return {
-    sku:       card.getAttribute('data-shipment'),
-    status:    card.querySelector('.status-select')?.value || 'pending',
-    firstOrder:getDate('ship-firstOrder'),
-    sample:    getDate('ship-sample'),
-    mainImg:   getDate('ship-mainImg'),
-    factory:   getDate('ship-factory'),
-    amzDate:   getDate('ship-amzDate'),
-    fba:       getDate('fbaArrival'),
-    amzText:   get('ship-amzText'),
-    remark:    card.querySelector('.ship-remark')?.value || '',
-    phone:     get('ship-supplier-phone'),
-    link1688:  get('ship-supplier-1688'),
-    firstContact: getDate('ship-first-contact'),
-    logRows,
-  };
-}
-
-function saveData() {
-  if (!autoSaveEnabled) return;
-  const products = Array.from(document.querySelectorAll('#productTbody tr[data-row="product"]'))
-    .map(tr => serializeProductRow(tr));
-  const shipCards = Array.from(document.querySelectorAll('#shipmentsContainer .shipment-card'))
-    .map(card => serializeShipCard(card));
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify({ products, shipCards, v: VERSION }));
-    const ind = document.getElementById('saveIndicator');
-    ind.style.display = 'flex';
-    setTimeout(() => { ind.style.display='none'; }, 2000);
-  } catch(e) { console.warn('保存失败', e); }
-}
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (!data.products) return;
-
-    // 清空现有行（保留第一条示例？不，全清再还原）
-    const tbody = document.getElementById('productTbody');
-    tbody.innerHTML = '';
-
-    data.products.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.setAttribute('data-row','product');
-      tr.setAttribute('data-starred', p.starred||'no');
-      tr.innerHTML = buildProductRowHTML({
-        sku: p.sku, id: p.id, name: p.name,
-        plan: p.planOrder, solar: p.solar, remark: p.remark,
-        supplier: p.supplier, altSup: p.altSupplier,
-      });
-      tbody.appendChild(tr);
-
-      // 回填其他日期
-      const dateMap = {
-        'plan-order':       p.planOrder,
-        'plan-first-order': p.firstOrder,
-        'plan-sample':      p.sample,
-        'plan-img-delivery':p.imgDelivery,
-        'plan-factory':     p.factory,
-        'plan-arrival':     p.arrival,
-      };
-      Object.entries(dateMap).forEach(([cls, val]) => {
-        if (!val) return;
-        const h = tr.querySelector('.'+cls);
-        if (h) {
-          h.value = val;
-          const w = h.closest('[data-apple-date]');
-          if (w) { const d=w.querySelector('.apple-date-display'); const c=w.querySelector('.apple-date-clear'); if(d){d.textContent=fmtDateLabel(val);d.className='apple-date-display has-value';} if(c)c.style.display='flex'; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1400">
+    <title>跨境运营灵动仪表盘 v5.3.4 (稳定修复版)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5; --primary-hover: #4338ca;
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --bg: #f3f4f6; --card-white: #ffffff; --text-title: #1f2937; --text-body: #4b5563;
         }
-      });
+        
+        body { margin: 0; padding: 25px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: var(--bg); color: var(--text-body); min-width: 1200px; scroll-behavior: smooth; }
+        .container { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
-      // 回填文本
-      const lf = tr.querySelector('.plan-listing'); if (lf) lf.value = p.listing||'';
-      const at = tr.querySelector('.plan-amz-text'); if (at) at.value = p.amzText||'';
-      const sf = tr.querySelector('.solar-select'); if (sf) sf.value = p.solar||'';
-      const ss = tr.querySelector('.sample-select'); if (ss) ss.value = p.sampleStatus||'no';
-      const oi = tr.querySelector('.onimg-select'); if (oi) oi.value = p.onImg||'no';
-      const ra = tr.querySelector('.remark-area:not(.note-field)'); if (ra) ra.value = p.remark||'';
-      const nf = tr.querySelector('.note-field'); if (nf) nf.value = p.notes||'';
+        /* 动画类 */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-      bindRowBehaviors(tr);
-    });
+        /* 顶部时钟 (修复字符与等宽字体) */
+        .world-clocks { display: flex; gap: 15px; padding: 15px 25px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .clock-item { display: flex; align-items: center; gap: 10px; padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .clock-item:last-child { border: none; padding-right: 0; }
+        .flag { font-size: 22px; }
+        .clock-info { display: flex; flex-direction: column; }
+        .clock-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .clock-time { font-size: 18px; color: #38bdf8; font-weight: bold; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; letter-spacing: 1px; }
 
-    // 发货卡片数据在 syncShipmentsFromProducts 后回填
-    if (data.shipCards) {
-      window.__pendingShipData = {};
-      data.shipCards.forEach(s => { window.__pendingShipData[s.sku] = s; });
+        /* 核心卡片容器 */
+        .card { background: var(--card-white); border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border: 1px solid #e5e7eb; transition: transform 0.2s; }
+        .card-header { padding: 15px 25px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 12px 12px 0 0; }
+        .card-title { font-size: 15px; font-weight: 700; color: var(--text-title); display: flex; align-items: center; gap: 8px; }
+        .card-body { padding: 25px; }
+
+        /* 输入控件交互 */
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s; background: #f9fafb; box-sizing: border-box; font-family: inherit; color: var(--text-title); }
+        input:focus, textarea:focus, select:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+
+        /* 1. 任务看板 (修复输入 Bug) */
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .task-list-container { height: 320px; overflow-y: auto; padding-right: 5px; }
+        .task-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 6px 12px; background: #fff; border-radius: 6px; border: 1px solid #e5e7eb; cursor: grab; transition: 0.2s; }
+        .task-item:active { cursor: grabbing; background: #f0fdf4; }
+        .task-item.dragging { opacity: 0.5; background: #e0e7ff; border-style: dashed; }
+        .task-input { border: none; background: transparent; padding: 6px; box-shadow: none !important; font-size: 13px; font-weight: 500; cursor: text; border-radius: 4px; }
+        .task-input:focus { background: #f3f4f6; }
+        .task-item.done .task-input { text-decoration: line-through; color: #9ca3af; }
+        .task-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+
+        /* 3. 利润计算面板 (恢复内嵌式) */
+        .input-group { display: grid; grid-template-columns: 2fr 1fr 1fr 140px; gap: 20px; align-items: flex-end; }
+        .field-label { font-size: 12px; font-weight: 700; color: #9ca3af; margin-bottom: 6px; display: block; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 20px; border: 1px solid #e5e7eb; }
+        .metric-item { text-align: center; border-right: 1px solid #e5e7eb; padding: 0 10px; }
+        .metric-item:last-child { border: none; }
+        .metric-input-box { background: #fff !important; border: 1px solid #d1d5db !important; text-align: center; font-size: 18px !important; font-weight: 700 !important; color: var(--text-title); padding: 8px; }
+        .metric-val { font-size: 24px; font-weight: 800; display: block; margin-top: 5px; color: var(--text-title); }
+        .metric-sub-val { font-size: 18px; font-weight: 700; display: block; margin-top: 8px; color: var(--text-body); }
+
+        /* 表格通用 */
+        .sku-table, .issue-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .sku-table th, .issue-table th { text-align: left; padding: 12px 15px; font-size: 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-weight: 600; }
+        .sku-table td, .issue-table td { padding: 10px 15px; border-bottom: 1px solid #f3f4f6; vertical-align: top; background: #fff; }
+        .issue-row { cursor: grab; }
+        .issue-row:active { cursor: grabbing; }
+        .issue-row.dragging { opacity: 0.4; }
+        .textarea-pro { min-height: 70px; resize: vertical; padding: 8px; font-size: 13px; line-height: 1.5; }
+
+        /* 状态标签 */
+        .status-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; }
+        .status-ok { background: #dcfce7; color: #166534; }
+        .status-late { background: #fee2e2; color: #991b1b; }
+        .status-wait { background: #f3f4f6; color: #9ca3af; }
+
+        /* FB 广告 */
+        .fb-header { display: grid; grid-template-columns: 80px 1fr 1.5fr 1fr 1fr 1fr 60px; gap: 15px; padding: 10px 20px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; font-size: 12px; font-weight: 700; color: #6b7280; }
+        .fb-row { display: grid; grid-template-columns: 80px 1fr 1.5fr 1fr 1fr 1fr 60px; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #f3f4f6; align-items: center; background: #fff; cursor: grab; }
+        .fb-row.dragging { opacity: 0.5; background: #f8fafc; }
+        .fb-img-box { width: 60px; height: 60px; background: #e5e7eb; border-radius: 6px; cursor: pointer; overflow: hidden; position: relative; border: 1px solid #d1d5db; }
+        .fb-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .fb-img-box:hover::after { content: '更换'; position: absolute; inset: 0; background: rgba(0,0,0,0.5); color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+        /* 按钮与通用 */
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; font-size: 13px; transition: 0.2s; font-family: inherit; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-ghost { background: white; color: #4b5563; border-color: #d1d5db; }
+        .btn-ghost:hover { background: #f9fafb; color: var(--primary); border-color: var(--primary); }
+        .btn-danger-ghost { background: white; color: var(--danger); border-color: #fecaca; }
+        .btn-danger-ghost:hover { background: #fef2f2; }
+        .btn-mini { padding: 4px 8px; font-size: 11px; }
+        .btn-icon { background: transparent; border: none; color: #9ca3af; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+        .btn-icon:hover { color: var(--danger); }
+        .action-group { display: flex; gap: 8px; align-items: center; }
+
+        /* 标签 */
+        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .tag { background: #fff; border: 1px solid #e5e7eb; padding: 4px 10px; border-radius: 15px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; color: #4b5563; transition: 0.2s; }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
+
+        .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 12px 24px; border-radius: 8px; display: none; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: bold; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="world-clocks" id="clockBar">
+        <div class="clock-item"><span class="flag">🇨🇳</span><div class="clock-info"><span class="clock-label">北京时间</span><span class="clock-time" id="time-bj">00:00:00</span></div></div>
+        <div class="clock-item"><span class="flag">🇺🇸</span><div class="clock-info"><span class="clock-label">洛杉矶</span><span class="clock-time" id="time-la">00:00:00</span></div></div>
+        <div class="clock-item"><span class="flag">🇬🇧</span><div class="clock-info"><span class="clock-label">伦敦</span><span class="clock-time" id="time-uk">00:00:00</span></div></div>
+        <div class="clock-item"><span class="flag">🇨🇿</span><div class="clock-info"><span class="clock-label">布拉格</span><span class="clock-time" id="time-cz">00:00:00</span></div></div>
+        <div class="clock-item"><span class="flag">🇦🇺</span><div class="clock-info"><span class="clock-label">悉尼</span><span class="clock-time" id="time-au">00:00:00</span></div></div>
+    </div>
+
+    <header style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="background: var(--primary); color:white; width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+                <h1 style="margin:0; font-size:18px; color: var(--text-title); font-weight: 800;">跨境运营核心工作台 <span style="font-weight:normal; opacity:0.5; font-size:13px;">v5.3.4</span></h1>
+                <p style="margin:0; font-size:12px; color:var(--text-body);">结算汇率: <strong id="rateLabel" style="color:var(--primary)">7.1200</strong></p>
+            </div>
+        </div>
+        <button class="btn btn-danger-ghost" onclick="clearEverything()"><i class="fa-solid fa-trash-can"></i> 格式化系统</button>
+    </header>
+
+    <div class="work-grid">
+        <div class="card">
+            <div class="card-header"><div class="card-title"><i class="fa-solid fa-star"></i> 重点任务</div></div>
+            <div class="card-body">
+                <div id="todoList" class="task-list-container" data-type="todo"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('todo')">+ 添加新任务</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><div class="card-title"><i class="fa-regular fa-clock"></i> 今日日程</div></div>
+            <div class="card-body">
+                <div id="scheduleList" class="task-list-container" data-type="schedule"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('schedule')">+ 安排时段</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><div class="card-title"><i class="fa-solid fa-rotate"></i> 日常固定</div><button class="btn-icon" onclick="manualResetDaily()"><i class="fa-solid fa-rotate-right"></i></button></div>
+            <div class="card-body">
+                <div id="dailyList" class="task-list-container" data-type="daily"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="addTask('daily')">+ 增加固定项</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-headset"></i> 售后处理中心</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('issue_db_v53', '售后记录')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'issue')"></label>
+                <select id="issueSort" onchange="loadIssues()" style="padding:6px; font-size:12px; width:130px;"><option value="date-desc">日期新➡旧</option><option value="date-asc">日期旧➡新</option><option value="order-asc">单号小➡大</option><option value="order-desc">单号大➡小</option></select>
+                <input type="text" id="issueSearch" placeholder="搜索单号..." oninput="filterIssues()" style="width:120px; padding:6px;">
+                <button class="btn btn-primary btn-mini" onclick="addIssueRow()"><i class="fa-solid fa-plus"></i> 新增</button>
+            </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <table class="issue-table">
+                <thead><tr><th style="width:120px; padding-left:20px;">登记日期</th><th style="width:80px; text-align:center;">已过天数</th><th style="width:150px;">订单编号</th><th>异常详情</th><th>进度动作</th><th style="width:100px;">状态</th><th style="width:50px;"></th></tr></thead>
+                <tbody id="issueBody" data-type="issue"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-calculator"></i> 利润即时分析面板</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('profit_list_v53', '利润档案')"><i class="fa-solid fa-download"></i> 导出档案</button>
+                <button class="btn btn-ghost btn-mini" onclick="resetCalc()"><i class="fa-solid fa-eraser"></i> 清空</button>
+                <button class="btn btn-primary btn-mini" onclick="saveCurrentProduct()"><i class="fa-solid fa-floppy-disk"></i> 存档记忆</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="input-group">
+                <div><label class="field-label">商品名称 / SKU</label><input type="text" id="calc_name" placeholder="输入名称进行存档" oninput="runCalc()"></div>
+                <div><label class="field-label">竞品售价 ($)</label><input type="number" id="calc_off" step="0.01" oninput="runCalc()"></div>
+                <div><label class="field-label">我司售价 ($)</label><input type="number" id="calc_my" step="0.01" oninput="runCalc()"></div>
+                <div>
+                    <label class="field-label">价格竞争力</label>
+                    <div id="calc_comp" style="padding:10px; border-radius:6px; font-weight:700; text-align:center; background:#f3f4f6; font-size:13px; color:#9ca3af;">等待输入</div>
+                </div>
+            </div>
+            
+            <div class="tag-list" id="calcHistoryTags"></div> <div class="metrics-grid">
+                <div class="metric-item">
+                    <label class="field-label">采购成本 (¥)</label>
+                    <input type="number" id="calc_cost" class="metric-input-box" oninput="runCalc()" placeholder="0">
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">头程运费 (¥)</label>
+                    <input type="number" id="calc_ship" class="metric-input-box" oninput="runCalc()" placeholder="0">
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">总成本 ($)</label>
+                    <span class="metric-sub-val" id="calc_total_cost">0.00</span>
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">单品毛利 ($)</label>
+                    <span class="metric-val" id="calc_profit" style="color:var(--primary);">$ 0.00</span>
+                </div>
+                <div class="metric-item">
+                    <label class="field-label">净利率</label>
+                    <span class="metric-val" id="calc_margin">0.00%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-plane-departure"></i> SKU 物流雷达</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('sku_radar_v53', '物流监控')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'sku')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addSKULogix()"><i class="fa-solid fa-plus"></i> 新增监控</button>
+            </div>
+        </div>
+        <div class="card-body" style="padding:0">
+            <table class="sku-table">
+                <thead><tr><th style="padding-left:20px;">SKU 名称</th><th style="width:15%">发货日期</th><th style="width:15%">时效(天)</th><th style="width:15%">预计到仓</th><th style="width:15%">状态</th><th style="width:10%">操作</th></tr></thead>
+                <tbody id="skuBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fa-brands fa-facebook-f"></i> FB 广告监控</div>
+            <div class="action-group">
+                <button class="btn btn-ghost btn-mini" onclick="exportData('fb_ads_v53', 'FB广告')"><i class="fa-solid fa-download"></i> 导出</button>
+                <label class="btn btn-ghost btn-mini" style="cursor:pointer"><i class="fa-solid fa-upload"></i> 导入 <input type="file" hidden accept=".csv" onchange="importCSV(event, 'fb')"></label>
+                <button class="btn btn-primary btn-mini" onclick="addFBRow()"><i class="fa-solid fa-plus"></i> 新增帖子</button>
+            </div>
+        </div>
+        <div class="card-body" style="padding:0">
+            <div class="fb-header"><div>预览图</div><div>广告名称</div><div>帖子编码</div><div>心情数</div><div>评论数</div><div>点赞数</div><div>操作</div></div>
+            <div id="fbContainer" data-type="fb"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="toast" class="toast">系统提示</div>
+
+<script>
+    let globalRate = 7.12;
+
+    // --- HTML 安全转义函数，杜绝因双引号导致的DOM崩坏清空bug ---
+    function esc(s) {
+        return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    showToast('已载入本地数据', 'info', 2000);
-  } catch(e) { console.warn('数据载入失败', e); }
-}
+    window.onload = () => {
+        startClocks();
+        fetchRate();
+        loadIssues();
+        loadWorkTasks();
+        loadFBTable();
+        loadSKULogix();
+        checkDailyReset();
+        loadCalcHistoryUI(); // 加载利润记忆标签
+        
+        // 恢复未存档草稿
+        try {
+            const draft = JSON.parse(localStorage.getItem('calc_draft_v53'));
+            if(draft) {
+                document.getElementById('calc_name').value = draft.name || '';
+                document.getElementById('calc_off').value = draft.off || '';
+                document.getElementById('calc_my').value = draft.my || '';
+                document.getElementById('calc_cost').value = draft.cost || '';
+                document.getElementById('calc_ship').value = draft.ship || '';
+                runCalc();
+            }
+        } catch(e){}
 
-function restoreShipCardData() {
-  const pending = window.__pendingShipData;
-  if (!pending) return;
-  document.querySelectorAll('#shipmentsContainer .shipment-card').forEach(card => {
-    const sku = card.getAttribute('data-shipment');
-    const s = pending[sku]; if (!s) return;
+        initNativeDragAndDrop(); 
+    };
 
-    // 状态
-    const sel = card.querySelector('.status-select'); if (sel) { sel.value=s.status||'pending'; applyStatusStyle(sel); }
-    // 文字
-    const texts = [['ship-amzText',s.amzText],['ship-remark',s.remark],['ship-supplier-phone',s.phone],['ship-supplier-1688',s.link1688]];
-    texts.forEach(([cls,val]) => { const el=card.querySelector('.'+cls)||card.querySelector(`input[class*="${cls}"],textarea[class*="${cls}"]`); if(el&&val) el.value=val; });
-
-    // 日期
-    const dateMap2 = {'ship-firstOrder':s.firstOrder,'ship-sample':s.sample,'ship-mainImg':s.mainImg,'ship-factory':s.factory,'ship-amzDate':s.amzDate,'fbaArrival':s.fba,'ship-first-contact':s.firstContact};
-    Object.entries(dateMap2).forEach(([cls,val]) => {
-      if (!val) return;
-      const h = card.querySelector('.'+cls);
-      if (h) { h.value=val; const w=h.closest('[data-apple-date]'); if(w){const d=w.querySelector('.apple-date-display');const c=w.querySelector('.apple-date-clear');if(d){d.textContent=fmtDateLabel(val);d.className='apple-date-display has-value';}if(c)c.style.display='flex';} }
-    });
-
-    // 物流行
-    if (s.logRows?.length > 1) {
-      const rowsContainer = card.querySelector('[data-rows]');
-      for (let i = 1; i < s.logRows.length; i++) {
-        const addBtn = card.querySelector('.btn[onclick*="addLogisticsRow"]');
-        if (addBtn) addLogisticsRow(addBtn);
-      }
+    // --- 时钟 & 汇率 (完全修复显示字符) ---
+    function startClocks() {
+        const update = () => {
+            [{id:'bj',z:'Asia/Shanghai'},{id:'la',z:'America/Los_Angeles'},{id:'uk',z:'Europe/London'},{id:'cz',z:'Europe/Prague'},{id:'au',z:'Australia/Sydney'}].forEach(z => {
+                const formatter = new Intl.DateTimeFormat('en-GB', { timeZone: z.z, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                document.getElementById(`time-${z.id}`).innerText = formatter.format(new Date());
+            });
+        }; update(); setInterval(update, 1000);
     }
-    if (s.logRows?.length) {
-      const logRows = card.querySelectorAll('[data-logrow]');
-      s.logRows.forEach((lr, idx) => {
-        const row = logRows[idx]; if (!row) return;
-        const sh = row.querySelector('.log-ship'); if (sh && lr.ship) { sh.value=lr.ship; const w=sh.closest('[data-apple-date]');if(w){const d=w.querySelector('.apple-date-display');const c=w.querySelector('.apple-date-clear');if(d){d.textContent=fmtDateLabel(lr.ship);d.className='apple-date-display has-value';}if(c)c.style.display='flex';} }
-        const dy = row.querySelector('.log-days'); if (dy) dy.value = lr.days||'0';
-      });
-      const firstDays = card.querySelector('.log-days'); if(firstDays) recalcLogistics(firstDays);
+    async function fetchRate() { try { const r = await fetch('https://open.er-api.com/v6/latest/USD'); const d = await r.json(); if(d?.rates?.CNY) { globalRate = d.rates.CNY; document.getElementById('rateLabel').innerText = globalRate.toFixed(4); runCalc(); } } catch(e){} }
+
+    // --- 原生拖拽实现 ---
+    let draggedItem = null;
+    function initNativeDragAndDrop() {
+        const containers = ['todoList', 'scheduleList', 'dailyList', 'issueBody', 'fbContainer'];
+        containers.forEach(id => {
+            const container = document.getElementById(id);
+            if(!container) return;
+            
+            container.addEventListener('dragstart', (e) => {
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return; 
+                draggedItem = e.target.closest('.task-item, .issue-row, .fb-row');
+                if(!draggedItem) return;
+                draggedItem.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if(!draggedItem) return;
+                const target = e.target.closest('.task-item, .issue-row, .fb-row');
+                if(target && target !== draggedItem && target.parentNode === container) {
+                    const rect = target.getBoundingClientRect();
+                    const next = (e.clientY - rect.top)/(rect.bottom - rect.top) > 0.5;
+                    container.insertBefore(draggedItem, next ? target.nextSibling : target);
+                }
+            });
+
+            container.addEventListener('dragend', () => {
+                if(draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                    if(id.includes('List')) saveTasks(id);
+                    else if(id === 'issueBody') persistIssues();
+                    else if(id === 'fbContainer') saveFB();
+                }
+            });
+        });
     }
 
-    autoUpdateShipmentStatus(card);
-  });
-  window.__pendingShipData = null;
-}
+    // --- 3. 利润计算器 (主界面版) ---
+    function runCalc() {
+        const off = parseFloat(document.getElementById('calc_off').value) || 0;
+        const my = parseFloat(document.getElementById('calc_my').value) || 0;
+        const cost = parseFloat(document.getElementById('calc_cost').value) || 0;
+        const ship = parseFloat(document.getElementById('calc_ship').value) || 0;
 
-function scheduleAutoSave() {
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(saveData, 3000);
-}
+        const badge = document.getElementById('calc_comp');
+        if(off && my) {
+            badge.innerText = my < off ? "具备优势" : (my === off ? "价格持平" : "价格劣势");
+            badge.style.color = my < off ? "#10b981" : (my === off ? "#f59e0b" : "#ef4444");
+            badge.style.background = my < off ? "#dcfce7" : (my === off ? "#fef3c7" : "#fee2e2");
+        } else { 
+            badge.innerText = "等待输入"; badge.style.color = "#9ca3af"; badge.style.background = "#f3f4f6"; 
+        }
 
-function saveSettings() {
-  try {
-    localStorage.setItem(LS_CFG, JSON.stringify({
-      lang: currentLang,
-      autoSave: autoSaveEnabled,
-      warnDays,
-    }));
-  } catch(e) {}
-}
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem(LS_CFG);
-    if (!raw) return;
-    const cfg = JSON.parse(raw);
-    if (cfg.lang)      { currentLang = cfg.lang; const ls=document.getElementById('langSelect');if(ls)ls.value=cfg.lang; }
-    if (cfg.autoSave===false) { autoSaveEnabled=false; const tb=document.getElementById('toggleAutoSave');if(tb)tb.classList.remove('on'); }
-    if (cfg.warnDays)  { warnDays = cfg.warnDays; const wd=document.getElementById('warnDays');if(wd)wd.value=warnDays; }
-  } catch(e) {}
-}
+        const totalPaid = my + (my > 0 && my < 35 ? 10 : 0);
+        const costUSD = (cost + ship) / globalRate;
+        const fee = totalPaid * 0.04;
+        const totalCost = costUSD + fee;
+        const profit = totalPaid > 0 ? totalPaid - totalCost : 0;
+        const margin = totalPaid > 0 ? (profit / totalPaid) * 100 : 0;
 
-function toggleAutoSave(btn) {
-  autoSaveEnabled = !autoSaveEnabled;
-  btn.classList.toggle('on', autoSaveEnabled);
-  showToast(autoSaveEnabled ? '自动保存已开启' : '自动保存已关闭', 'info');
-  saveSettings();
-}
+        document.getElementById('calc_total_cost').innerText = totalCost.toFixed(2);
+        document.getElementById('calc_profit').innerText = `$ ${profit.toFixed(2)}`;
+        const mEl = document.getElementById('calc_margin');
+        mEl.innerText = margin.toFixed(2) + "%";
+        mEl.style.color = margin >= 30 ? "#10b981" : (margin > 0 ? "#f59e0b" : "#ef4444");
+        
+        // 实时保存草稿
+        const draft = { name: document.getElementById('calc_name').value, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value };
+        localStorage.setItem('calc_draft_v53', JSON.stringify(draft));
+    }
 
-function clearAllData() {
-  if (!confirm('确定要清空所有本地数据吗？\n此操作无法撤销，包括所有产品记录和发货计划。')) return;
-  try { localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_CFG); } catch(e) {}
-  location.reload();
-}
+    function saveCurrentProduct() {
+        const n = document.getElementById('calc_name').value.trim();
+        if(!n) return showToast("必须填写商品名称才能存档！");
+        const data = { 
+            name: n, off: document.getElementById('calc_off').value, my: document.getElementById('calc_my').value, 
+            cost: document.getElementById('calc_cost').value, ship: document.getElementById('calc_ship').value 
+        };
+        
+        let list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        const existingIndex = list.findIndex(i => i.name === n);
+        if(existingIndex > -1) { list[existingIndex] = data; } else { list.unshift(data); }
+        
+        localStorage.setItem('profit_list_v53', JSON.stringify(list));
+        loadCalcHistoryUI();
+        showToast("已成功存档记忆！");
+    }
 
-/* ============================================================
-   导出 CSV
-   ============================================================ */
-function exportCSV() {
-  const rows = document.querySelectorAll('#productTbody tr[data-row="product"]');
-  if (!rows.length) { showToast('没有数据可导出', 'warning'); return; }
+    function loadCalcHistoryUI() {
+        const cloud = document.getElementById('calcHistoryTags');
+        const list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        cloud.innerHTML = list.length ? '' : '<span style="font-size:12px;color:#ccc">暂无历史存档记录</span>';
+        
+        list.forEach(item => {
+            const tag = document.createElement('div'); tag.className = 'tag';
+            tag.innerHTML = `<span>${esc(item.name)}</span><i class="fa-solid fa-xmark" onclick="delCalcHistory('${esc(item.name)}', event)" style="font-size:10px;opacity:0.5;margin-left:4px;"></i>`;
+            tag.onclick = () => {
+                document.getElementById('calc_name').value = item.name;
+                document.getElementById('calc_off').value = item.off;
+                document.getElementById('calc_my').value = item.my;
+                document.getElementById('calc_cost').value = item.cost;
+                document.getElementById('calc_ship').value = item.ship;
+                runCalc();
+                showToast("已恢复数据");
+            };
+            cloud.appendChild(tag);
+        });
+    }
 
-  const headers = ['SKU','ID码','产品名称','计划下单','首批下单','样品接收','图片交付','工厂交货','FBA到货','Listing状态','Amazon单号','营销节点','借样状态','上图状态','主供应商','备选供应商','备注','待跟进事项'];
-  const nodeLabels = {'':'','1':'1月新年','2':'2月情人节','3':'3月妇女节','4':'4月复活节','5':'5月母亲节','6':'6月父亲节','7':'7月PrimeDay','8':'8月返校季','9':'9月秋季','10':'10月万圣节','11':'11月黑五','12':'12月圣诞'};
+    function delCalcHistory(name, ev) {
+        ev.stopPropagation();
+        let list = JSON.parse(localStorage.getItem('profit_list_v53') || '[]');
+        list = list.filter(i => i.name !== name);
+        localStorage.setItem('profit_list_v53', JSON.stringify(list));
+        loadCalcHistoryUI();
+    }
 
-  const csvRows = [headers.join(',')];
-  rows.forEach(tr => {
-    const g = cls => (tr.querySelector('.'+cls)?.value || '').replace(/,/g,' ');
-    const gH = cls => (tr.querySelector('.'+cls)?.value || '').replace(/,/g,' ');
-    const row = [
-      g('sku-field'),
-      g('id-field').replace('ID: ',''),
-      g('name-field'),
-      gH('plan-order'),
-      gH('plan-first-order'),
-      gH('plan-sample'),
-      gH('plan-img-delivery'),
-      gH('plan-factory'),
-      gH('plan-arrival'),
-      g('plan-listing'),
-      g('plan-amz-text'),
-      nodeLabels[gH('solar-select')]||gH('solar-select'),
-      tr.querySelector('.sample-select')?.value==='yes'?'已借样':'未借样',
-      tr.querySelector('.onimg-select')?.value==='yes'?'已上图':'未上图',
-      g('supplier-field'),
-      g('alt-supplier-field'),
-      (tr.querySelector('.note-field')?.value||'').replace(/,/g,' ').replace(/\n/g,' '),
-      (tr.querySelector('.remark-area:not(.note-field)')?.value||'').replace(/,/g,' ').replace(/\n/g,' '),
-    ];
-    csvRows.push(row.join(','));
-  });
+    function resetCalc() { 
+        ['calc_name','calc_off','calc_my','calc_cost','calc_ship'].forEach(id => document.getElementById(id).value = ''); 
+        runCalc(); 
+        localStorage.removeItem('calc_draft_v53');
+    }
 
-  const csvContent = '\uFEFF' + csvRows.join('\n'); // BOM for Excel
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url;
-  a.download = `供应链数据_${fmtISO(new Date())}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-  showToast(`已导出 ${rows.length} 条产品数据`, 'success');
-}
+    // --- 导出/导入 CSV ---
+    function exportData(key, filename) {
+        try {
+            let data = JSON.parse(localStorage.getItem(key) || '[]');
+            if(data.length === 0) return showToast("当前模块无数据，无法导出");
+            let csv = "\uFEFF" + Object.keys(data[0]).join(",") + "\n";
+            data.forEach(row => {
+                csv += Object.keys(data[0]).map(k => {
+                    let v = row[k] ? String(row[k]) : '';
+                    if(k === 'img' && v.length > 200) return '"[BASE64_IMAGE]"'; 
+                    return `"${v.replace(/"/g, '""')}"`;
+                }).join(",") + "\n";
+            });
+            downloadCSV(csv, `${filename}_Backup_${new Date().toISOString().slice(0,10)}.csv`);
+        } catch(e) { showToast("导出失败"); }
+    }
 
-/* ============================================================
-   快捷键面板
-   ============================================================ */
-function showShortcuts() { document.getElementById('shortcutOverlay').style.display='flex'; }
-function hideShortcuts(e) { if(!e||e.target===document.getElementById('shortcutOverlay')) document.getElementById('shortcutOverlay').style.display='none'; }
+    function importCSV(ev, type) {
+        const file = ev.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const lines = e.target.result.split('\n').filter(l=>l.trim().length > 0);
+                if(lines.length < 2) return showToast("文件数据为空");
+                const headers = lines[0].split(',').map(h=>h.replace(/"/g,'').trim());
+                const result = [];
+                for(let i=1; i<lines.length; i++) {
+                    const rowStr = lines[i];
+                    let cols = [], curr = '', inQuote = false;
+                    for(let c of rowStr) {
+                        if(c === '"') inQuote = !inQuote;
+                        else if(c === ',' && !inQuote) { cols.push(curr); curr=''; }
+                        else curr += c;
+                    }
+                    cols.push(curr);
+                    let obj = {};
+                    headers.forEach((h, x) => obj[h] = cols[x] ? cols[x].replace(/^"|"$/g,'').replace(/""/g,'"') : '');
+                    result.push(obj);
+                }
+                
+                let key = type === 'issue' ? 'issue_db_v53' : (type === 'sku' ? 'sku_radar_v53' : 'fb_ads_v53');
+                localStorage.setItem(key, JSON.stringify(result));
+                showToast("导入成功！正在重载面板...");
+                setTimeout(()=>location.reload(), 1000);
+            } catch(err) { showToast("导入解析错误，请确保使用系统导出的CSV"); }
+        };
+        reader.readAsText(file);
+    }
+    function downloadCSV(c, n) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([c], {type:'text/csv;charset=utf-8;'})); a.download = n; a.click(); }
 
-/* ============================================================
-   键盘快捷键
-   ============================================================ */
-document.addEventListener('keydown', e => {
-  const tag = document.activeElement.tagName;
-  const editing = tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT';
-  const modal = document.getElementById('addProductMask').style.display==='flex';
-  const shortcutOpen = document.getElementById('shortcutOverlay').style.display==='flex';
+    // --- 任务模块 ---
+    function checkDailyReset() { const t = new Date().toLocaleDateString(); if(localStorage.getItem('lr_v53') !== t) { let l = JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); localStorage.setItem('lr_v53', t); } }
+    
+    function loadWorkTasks() {
+        ['todo','schedule','daily'].forEach(t => {
+            const l = JSON.parse(localStorage.getItem(`work_${t}`)||'[]');
+            const el = document.getElementById(`${t}List`); el.innerHTML = '';
+            l.forEach((i, x) => {
+                const d = document.createElement('div'); d.className = `task-item fade-in ${i.done?'done':''}`; d.setAttribute('draggable','true');
+                d.innerHTML = `
+                    <input type="checkbox" ${i.done?'checked':''} onchange="togTask('${t}',${x})">
+                    <input type="text" class="task-input" value="${esc(i.text)}" oninput="editTask('${t}',${x},this)" placeholder="输入内容..." spellcheck="false">
+                    <button class="btn-icon" onclick="delTask('${t}',${x})"><i class="fa-solid fa-times"></i></button>
+                `;
+                el.appendChild(d);
+            });
+        });
+    }
+    function addTask(t) { let l=JSON.parse(localStorage.getItem(`work_${t}`)||'[]'); l.push({text:'',done:false}); localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
+    function togTask(t,i) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l[i].done=!l[i].done; localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
+    function editTask(t,i,el) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l[i].text=el.value; localStorage.setItem(`work_${t}`,JSON.stringify(l)); }
+    function delTask(t,i) { let l=JSON.parse(localStorage.getItem(`work_${t}`)); l.splice(i,1); localStorage.setItem(`work_${t}`,JSON.stringify(l)); loadWorkTasks(); }
+    function manualResetDaily() { let l=JSON.parse(localStorage.getItem('work_daily')||'[]'); l.forEach(i=>i.done=false); localStorage.setItem('work_daily',JSON.stringify(l)); loadWorkTasks(); showToast("日常打卡已重置"); }
+    function saveTasks(id) { const t=id.replace('List',''); const i=Array.from(document.getElementById(id).children).map(d=>({text:d.querySelector('.task-input').value,done:d.querySelector('input[type="checkbox"]').checked})); localStorage.setItem(`work_${t}`,JSON.stringify(i)); }
 
-  if (e.key==='Escape') {
-    if (shortcutOpen) { hideShortcuts(null); return; }
-    if (modal) { closeAddProduct(); return; }
-    closeAllPopovers();
-    if (document.getElementById('skuSearchInput').value) { document.getElementById('skuSearchInput').value=''; applyFilters(); }
-    return;
-  }
+    // --- 售后模块 (终极修复 Bug 区) ---
+    function loadIssues() {
+        let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]');
+        const sort = document.getElementById('issueSort').value;
+        d.sort((a,b) => {
+            if(sort === 'date-desc') return new Date(b.date) - new Date(a.date);
+            if(sort === 'date-asc') return new Date(a.date) - new Date(b.date);
+            if(sort === 'order-asc') return (a.order||'').localeCompare(b.order||'');
+            if(sort === 'order-desc') return (b.order||'').localeCompare(a.order||'');
+            return getDaysElapsed(b.date) - getDaysElapsed(a.date);
+        });
+        const body = document.getElementById('issueBody'); body.innerHTML='';
+        d.forEach(i => {
+            const tr = document.createElement('tr'); tr.className='issue-row fade-in'; tr.setAttribute('draggable','true');
+            const days = getDaysElapsed(i.date);
+            tr.innerHTML = `<td style="padding-left:20px"><input type="date" value="${esc(i.date)}" onchange="persistIssues()"></td><td style="text-align:center;"><span class="status-tag" style="background:${days>3?'#fee2e2':'#fef3c7'}; color:${days>3?'#991b1b':'#b45309'}">${days}天</span></td><td><input type="text" value="${esc(i.order)}" placeholder="Order#" oninput="persistIssues()"></td><td><textarea class="textarea-pro" placeholder="详情" oninput="persistIssues()">${esc(i.issue)}</textarea></td><td><textarea class="textarea-pro" placeholder="进度" oninput="persistIssues()">${esc(i.process)}</textarea></td><td><select onchange="persistIssues(); this.closest('tr').style.opacity=this.value==='solved'?'0.5':'1'"><option value="pending" ${i.status==='pending'?'selected':''}>⏳ 处理中</option><option value="solved" ${i.status==='solved'?'selected':''}>✅ 完结</option></select></td><td style="text-align:center"><button class="btn-icon" onclick="this.closest('tr').remove();persistIssues()"><i class="fa-solid fa-trash"></i></button></td>`;
+            if(i.status==='solved') tr.style.opacity='0.5';
+            body.appendChild(tr);
+        });
+    }
+    
+    // 强制先保存再添加，绝对避免数据重置的 Bug
+    function addIssueRow() { 
+        persistIssues(); 
+        let d = JSON.parse(localStorage.getItem('issue_db_v53')||'[]'); 
+        d.unshift({ date: new Date().toISOString().split('T')[0], order: '', issue: '', process: '', status: 'pending' }); 
+        localStorage.setItem('issue_db_v53', JSON.stringify(d)); 
+        loadIssues(); 
+    }
+    
+    function persistIssues() { 
+        const r = Array.from(document.querySelectorAll('#issueBody tr')).map(row => ({ 
+            date: row.querySelector('input[type="date"]').value, 
+            order: row.querySelector('input[type="text"]').value, 
+            issue: row.querySelectorAll('textarea')[0].value, 
+            process: row.querySelectorAll('textarea')[1].value, 
+            status: row.querySelector('select').value 
+        })); 
+        localStorage.setItem('issue_db_v53', JSON.stringify(r)); 
+    }
+    
+    function filterIssues() { const k = document.getElementById('issueSearch').value.toLowerCase(); document.querySelectorAll('#issueBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(k) ? '' : 'none'); }
+    function getDaysElapsed(d) { const s=new Date(d||new Date()), n=new Date(); return Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(s.getFullYear(),s.getMonth(),s.getDate()))/(86400000)); }
 
-  if (e.ctrlKey||e.metaKey) {
-    if (e.key==='s') { e.preventDefault(); saveData(); showToast('数据已手动保存', 'success'); return; }
-    if (e.key==='e') { e.preventDefault(); exportCSV(); return; }
-    return;
-  }
+    // --- SKU 物流雷达 ---
+    function loadSKULogix() {
+        const list = JSON.parse(localStorage.getItem('sku_radar_v53') || '[]');
+        const c = document.getElementById('skuBody'); c.innerHTML = '';
+        list.forEach((item, index) => {
+            const arrDate = new Date(new Date(item.shipDate).getTime() + item.duration * 86400000);
+            const isLate = new Date().setHours(0,0,0,0) > arrDate.getTime();
+            let st = '<span class="status-tag status-wait">待填写</span>';
+            if(item.name && item.shipDate) st = isLate ? '<span class="status-tag status-late">⚠ 已逾期</span>' : '<span class="status-tag status-ok">🟢 运输中</span>';
+            const tr = document.createElement('tr'); tr.className='fade-in';
+            tr.innerHTML = `<td style="padding-left:20px"><input type="text" value="${esc(item.name)}" oninput="upSKU(${index},'name',this.value)"></td><td><input type="date" value="${esc(item.shipDate)}" onchange="upSKU(${index},'shipDate',this.value)"></td><td><input type="number" value="${esc(item.duration)}" oninput="upSKU(${index},'duration',this.value)"></td><td style="font-weight:700">${item.shipDate?arrDate.toLocaleDateString():'--'}</td><td>${st}</td><td><button class="btn-icon" onclick="delSKU(${index})"><i class="fa-solid fa-trash"></i></button></td>`;
+            c.appendChild(tr);
+        });
+    }
+    function addSKULogix() { 
+        let l=JSON.parse(localStorage.getItem('sku_radar_v53')||'[]'); 
+        l.push({name:'',shipDate:'',duration:15}); 
+        localStorage.setItem('sku_radar_v53',JSON.stringify(l)); 
+        loadSKULogix(); 
+    }
+    function upSKU(i,f,v) { 
+        let l=JSON.parse(localStorage.getItem('sku_radar_v53')); 
+        l[i][f]=v; 
+        localStorage.setItem('sku_radar_v53',JSON.stringify(l)); 
+        // 只在修改日期和时效时重载表格以更新状态，修改名称不重载以免丢失焦点
+        if(f !== 'name') loadSKULogix(); 
+    }
+    function delSKU(i) { let l=JSON.parse(localStorage.getItem('sku_radar_v53')); l.splice(i,1); localStorage.setItem('sku_radar_v53',JSON.stringify(l)); loadSKULogix(); }
 
-  if (editing || modal) return;
+    // --- FB 广告监控 ---
+    function loadFBTable() {
+        const l = JSON.parse(localStorage.getItem('fb_ads_v53') || '[]');
+        const c = document.getElementById('fbContainer'); c.innerHTML = '';
+        l.forEach((item, i) => {
+            const d = document.createElement('div'); d.className = 'fb-row fade-in'; d.setAttribute('draggable','true');
+            d.innerHTML = `<div class="fb-img-box" onclick="document.getElementById('fbFile${i}').click()"><img src="${esc(item.img||'')}"><input type="file" id="fbFile${i}" hidden accept="image/*" onchange="handleFBImg(${i},event)"></div><input type="text" value="${esc(item.adName||'')}" placeholder="广告名" oninput="upFB(${i},'adName',this.value)"><input type="text" value="${esc(item.code||'')}" placeholder="编码" oninput="upFB(${i},'code',this.value)"><input type="number" value="${esc(item.heart||0)}" oninput="upFB(${i},'heart',this.value)"><input type="number" value="${esc(item.comm||0)}" oninput="upFB(${i},'comm',this.value)"><input type="number" value="${esc(item.like||0)}" oninput="upFB(${i},'like',this.value)"><button class="btn-icon" onclick="delFB(${i})"><i class="fa-solid fa-trash"></i></button>`;
+            c.appendChild(d);
+        });
+    }
+    function addFBRow() { saveFB(); let l=JSON.parse(localStorage.getItem('fb_ads_v53')||'[]'); l.push({img:'',adName:'',code:'',heart:0,comm:0,like:0}); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
+    function upFB(i,f,v) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l[i][f]=v; localStorage.setItem('fb_ads_v53',JSON.stringify(l)); }
+    function delFB(i) { let l=JSON.parse(localStorage.getItem('fb_ads_v53')); l.splice(i,1); localStorage.setItem('fb_ads_v53',JSON.stringify(l)); loadFBTable(); }
+    function handleFBImg(i,ev) { 
+        const f=ev.target.files[0]; 
+        if(f.size > 2*1024*1024) return showToast("图片过大(>2MB)，请压缩后上传保护系统性能");
+        const r=new FileReader(); 
+        r.onload=e=>{upFB(i,'img',e.target.result);loadFBTable()}; 
+        r.readAsDataURL(f); 
+    }
+    function saveFB() { const rows = Array.from(document.getElementById('fbContainer').children); const l = rows.map((div) => ({ img: div.querySelector('img').src, adName: div.querySelectorAll('input')[1].value, code: div.querySelectorAll('input')[2].value, heart: div.querySelectorAll('input')[3].value, comm: div.querySelectorAll('input')[4].value, like: div.querySelectorAll('input')[5].value })); localStorage.setItem('fb_ads_v53', JSON.stringify(l)); }
 
-  if (e.key==='n' || e.key==='N') { e.preventDefault(); openAddProduct(); return; }
-  if (e.key==='/') { e.preventDefault(); document.getElementById('skuSearchInput').focus(); return; }
-  if (e.key==='r' || e.key==='R') { e.preventDefault(); checkReminders(true); return; }
-  if (e.key==='1') { const nav=document.querySelector('.nav-item[onclick*="dashboard"]'); switchTab('dashboard',nav); return; }
-  if (e.key==='2') { const nav=document.querySelector('.nav-item[onclick*="marketing"]'); switchTab('marketing',nav); return; }
-  if (e.key==='3') { const nav=document.querySelector('.nav-item[onclick*="shipments"]'); switchTab('shipments',nav); return; }
-});
-
-/* ============================================================
-   初始化
-   ============================================================ */
-window.onload = function() {
-  showProgress();
-  loadSettings();
-  loadData();
-
-  updateClock();
-  setInterval(updateClock, 1000);
-  setInterval(() => { checkReminders(); updateOverview(); }, 60000);
-
-  renderCalendar();
-
-  // 绑定初始行为
-  document.querySelectorAll('#productTbody tr[data-row="product"]').forEach(tr => bindRowBehaviors(tr));
-
-  // 绑定工具栏事件
-  document.getElementById('btnSkuSearch').addEventListener('click', applyFilters);
-  document.getElementById('skuSearchInput').addEventListener('keydown', e => { if(e.key==='Enter') applyFilters(); });
-  document.getElementById('btnReset').addEventListener('click', resetAll);
-  document.getElementById('btnOpenAddProduct').addEventListener('click', openAddProduct);
-  document.getElementById('addProductMask').addEventListener('click', e => { if(e.target.id==='addProductMask') closeAddProduct(); });
-
-  // 绑定弹窗内日期选择器
-  bindAppleDatePickers(document);
-
-  // 发货计划同步
-  syncShipmentsFromProducts();
-  setTimeout(() => { restoreShipCardData(); checkReminders(); updateOverview(); }, 200);
-
-  // 自动保存心跳
-  setInterval(() => { if(autoSaveEnabled) saveData(); }, 5000);
-};
+    // --- 系统通用 ---
+    function clearEverything() { if(confirm("【最高警告】确认格式化系统？\n所有任务、售后、利润、广告数据将被永久清除！\n建议操作前先导出备份！")) { localStorage.clear(); location.reload(); } }
+    let toastTimeout;
+    function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.style.display='block'; clearTimeout(toastTimeout); toastTimeout = setTimeout(()=>t.style.display='none',3000); }
 </script>
 </body>
 </html>
